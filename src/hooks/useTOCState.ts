@@ -47,27 +47,22 @@ export const useTOCState = (initialItems: TOCItem[] = [], initialActiveId?: stri
             const updatedItems = updateActiveItem(prev.items, itemId);
 
             let newExpandedItems = prev.expandedItems;
+            let itemsWithExpanded = updatedItems;
+
             if (itemId && autoExpand) {
                 const parentIds = getParentIds(updatedItems, itemId);
                 newExpandedItems = new Set([...prev.expandedItems, ...parentIds]);
 
-                let itemsWithExpanded = updatedItems;
                 parentIds.forEach(parentId => {
                     itemsWithExpanded = updateItemExpanded(itemsWithExpanded, parentId, true);
                 });
-
-                return {
-                    ...prev,
-                    items: itemsWithExpanded,
-                    activeItemId: itemId,
-                    expandedItems: newExpandedItems,
-                };
             }
 
             return {
                 ...prev,
-                items: updatedItems,
+                items: itemsWithExpanded,
                 activeItemId: itemId,
+                expandedItems: newExpandedItems,
             };
         });
     }, []);
@@ -80,7 +75,9 @@ export const useTOCState = (initialItems: TOCItem[] = [], initialActiveId?: stri
             const collectIds = (items: TOCItem[]) => {
                 items.forEach(item => {
                     allIds.add(item.id);
-                    collectIds(item.children);
+                    if (item.children.length > 0) {
+                        collectIds(item.children);
+                    }
                 });
             };
 
@@ -99,6 +96,9 @@ export const useTOCState = (initialItems: TOCItem[] = [], initialActiveId?: stri
             ...prev,
             items: collapseAllItems(prev.items),
             expandedItems: new Set(),
+            // Also clear search if active
+            searchQuery: '',
+            filteredItems: null,
         }));
     }, []);
 

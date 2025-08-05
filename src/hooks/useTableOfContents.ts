@@ -11,12 +11,13 @@ export const useTableOfContents = (
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [initialized, setInitialized] = useState(false);
 
-    const { state, updateState, actions } = useTOCState([], initialActiveId);
+    const { state, updateState, actions } = useTOCState();
 
-    // Initialize data
+    // Initialize data ONCE
     useEffect(() => {
-        if (data) {
+        if (data && !initialized) {
             setLoading(true);
             setError(null);
 
@@ -30,15 +31,19 @@ export const useTableOfContents = (
 
                 // Set initial active item if provided
                 if (initialActiveId) {
-                    actions.setActiveItem(initialActiveId, autoExpandActive);
+                    setTimeout(() => {
+                        actions.setActiveItem(initialActiveId, autoExpandActive);
+                    }, 0);
                 }
+
+                setInitialized(true);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to parse TOC data');
             } finally {
                 setLoading(false);
             }
         }
-    }, [data, initialActiveId, autoExpandActive, updateState, actions]);
+    }, [data, initialized]); // Minimal dependencies
 
     // Search functionality
     const filteredItems = useMemo(() => {
@@ -50,15 +55,17 @@ export const useTableOfContents = (
 
     // Update filtered items
     useEffect(() => {
-        updateState(prev => ({
-            ...prev,
-            filteredItems,
-        }));
-    }, [filteredItems, updateState]);
+        if (initialized) {
+            updateState(prev => ({
+                ...prev,
+                filteredItems,
+            }));
+        }
+    }, [filteredItems, initialized]);
 
     // API object
     const api: TOCApi = useMemo(() => ({
-        setActiveById: actions.setActiveItem,
+        setActiveById: (id: string) => actions.setActiveItem(id),
         expandAll: actions.expandAll,
         collapseAll: actions.collapseAll,
         filterByString: actions.setSearchQuery,
@@ -67,7 +74,7 @@ export const useTableOfContents = (
             if (!state.activeItemId) return null;
             return findItemById(state.items, state.activeItemId);
         },
-    }), [actions, state.activeItemId, state.items]);
+    }), [state.activeItemId, state.items]);
 
     return {
         state,
@@ -77,3 +84,6 @@ export const useTableOfContents = (
         error,
     };
 };
+
+// Add default export as well
+export default useTableOfContents;

@@ -1,0 +1,219 @@
+// TableOfContentsItem.module.scss
+// Styles for individual TOC items based on Figma design
+
+.item {
+  position: relative;
+
+  // Hover effect for the entire item area
+  &:hover {
+    background-color: rgba(0, 122, 204, 0.05);
+  }
+
+  // Active item styling
+  &.active {
+    background-color: #007acc;
+    color: #fff;
+
+    .itemButton {
+      color: #fff;
+      background-color: transparent;
+    }
+
+    .expandButton {
+      color: #fff;
+    }
+
+    &:hover {
+      background-color: #005a9e;
+    }
+  }
+
+  // When searching, reduce visual hierarchy
+  &.searching {
+    .itemContent {
+      padding-left: calc(var(--indent-level, 0) * 12px + 8px);
+    }
+  }
+}
+
+.itemContent {
+  display: flex;
+  align-items: center;
+  padding: 2px 8px;
+  padding-left: calc(var(--indent-level, 0) * 16px + 8px);
+  min-height: 22px;
+  position: relative;
+
+  // Background highlight for the current level only
+  .item.active > & {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Main item button - now contains both icon and text
+.itemButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+  font-size: 13px;
+  font-family: inherit;
+  min-height: 18px;
+
+  &:hover {
+    color: #007acc;
+  }
+
+  .item.active & {
+    color: #fff;
+
+    &:hover {
+      color: #fff;
+    }
+  }
+}
+
+// Expand/Collapse icon - now part of the button
+.expandIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  font-size: 10px;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  transform-origin: center;
+  color: inherit;
+
+  .item.expanded & {
+    transform: none; // Already pointing down
+  }
+}
+
+.itemTitle {
+  flex: 1;
+  line-height: 1.3;
+  word-break: break-word;
+  hyphens: auto;
+  margin-left: 0; // Reset any margin
+
+  // For items without children, add margin to align with items that have icons
+  .item:not(.hasChildren) & {
+    margin-left: 20px; // Same width as icon + margin
+  }
+}
+
+// Children list
+.childrenList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.02);
+
+  .item.active & {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+// Anchors list (shown when parent is active)
+.anchorsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: rgba(0, 122, 204, 0.1);
+  border-left: 2px solid #007acc;
+
+  .item.active & {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left-color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.anchorItem {
+  position: relative;
+}
+
+.anchorButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 2px 8px;
+  padding-left: calc(var(--indent-level, 0) * 16px + 32px);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: #555;
+  font-size: 12px;
+  font-family: inherit;
+  min-height: 20px;
+
+  &:hover {
+    background-color: rgba(0, 122, 204, 0.1);
+    color: #007acc;
+  }
+
+  .item.active & {
+    color: rgba(255, 255, 255, 0.9);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+  }
+}
+
+.anchorTitle {
+  line-height: 1.2;
+  word-break: break-word;
+
+  // Add a small bullet point before anchor titles
+  &::before {
+    content: '•';
+    margin-right: 6px;
+    opacity: 0.6;
+  }
+}
+
+// Smooth animations
+.childrenList,
+.anchorsList {
+  transition: all 0.2s ease;
+}
+
+// Focus styles for accessibility
+.itemButton:focus,
+.anchorButton:focus {
+  outline: 2px solid #007acc;
+  outline-offset: -2px;
+  border-radius: 2px;
+}
+
+.item.active {
+  .itemButton:focus,
+  .anchorButton:focus {
+    outline-color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .item.active {
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #fff;
+  }
+
+  .itemButton:hover {
+    color: #000;
+    background-color: #fff;
+  }
+}
