@@ -156,7 +156,7 @@ Tests include:
 }
 ```
 
-## ♿ Accessibility
+## 👥 Accessibility
 
 - **Keyboard navigation** support
 - **Screen reader** support with ARIA labels
