@@ -1,3 +1,4 @@
+**🚀 [🦄 Live Demo - Try it now!](https://react-toc-component-lihwdbmjn-gosias-projects-da6b4f72.vercel.app) 🚀**
 # React Table of Contents Component
 
 A professional Table of Contents component built with React, TypeScript, and SASS for complex documentation sites.
