@@ -3,7 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { TableOfContents } from '../TableOfContents';
 import type { JetBrainsHelpTOC } from '../../../types';
 
-// Mock data for testing
 const mockTOCData: JetBrainsHelpTOC = {
     entities: {
         pages: {
@@ -79,7 +78,7 @@ describe('TableOfContents', () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByPlaceholderText('Search...')).toBeInTheDocument();
+            expect(screen.getByPlaceholderText('Search documentation...')).toBeInTheDocument();
         });
     });
 

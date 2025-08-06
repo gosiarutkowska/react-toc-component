@@ -1,30 +1,26 @@
 import { useState, useEffect } from 'react';
 import { TableOfContents } from './components/TableOfContents';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import type { TOCItem, TOCAnchor } from './types';
 
 function App() {
-    const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null); // null = system preference
-
-    // Initialize theme based on system preference
+    const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null);
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-        // Check if user has a saved preference
         const savedTheme = localStorage.getItem('theme-preference');
         if (savedTheme === 'dark') {
             setIsDarkMode(true);
         } else if (savedTheme === 'light') {
             setIsDarkMode(false);
         } else {
-            // Use system preference
             setIsDarkMode(null);
         }
 
         const handleChange = (): void => {
-            // Only update if user hasn't manually set a preference
             const currentSaved = localStorage.getItem('theme-preference');
             if (!currentSaved) {
-                // Don't auto-update, leave as null for system preference
+                // Don't auto-update, leaved as null for system preference
             }
         };
 
@@ -32,7 +28,7 @@ function App() {
         return () => mediaQuery.removeEventListener('change', handleChange);
     }, []);
 
-    // Apply theme to document
+    // Apply theme
     useEffect(() => {
         const htmlElement = document.documentElement;
 
@@ -43,7 +39,6 @@ function App() {
             htmlElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme-preference', 'light');
         } else {
-            // Remove attribute to use system preference
             htmlElement.removeAttribute('data-theme');
             localStorage.removeItem('theme-preference');
         }
@@ -51,7 +46,6 @@ function App() {
 
     const handleItemClick = (item: TOCItem): void => {
         console.log('Clicked item:', item);
-        // In real app, navigate to the page
         if (item.url) {
             console.log('Navigate to:', item.url);
         }
@@ -59,7 +53,6 @@ function App() {
 
     const handleAnchorClick = (anchor: TOCAnchor): void => {
         console.log('Clicked anchor:', anchor);
-        // In real app, navigate to the anchor
         const fullUrl = `${anchor.url}${anchor.anchor}`;
         console.log('Navigate to:', fullUrl);
     };
@@ -100,14 +93,17 @@ function App() {
 
             <main className="app-main">
                 <aside className="toc-sidebar">
-                    <TableOfContents
-                        // Remove the data prop to use async loading
-                        onItemClick={handleItemClick}
-                        onAnchorClick={handleAnchorClick}
-                        initialActiveId="Getting_started"
-                        searchable={true}
-                        className="main-toc"
-                    />
+                    <ErrorBoundary onError={(error, errorInfo) => {
+                        console.error('TOC Error Boundary triggered:', error, errorInfo);
+                    }}>
+                        <TableOfContents
+                            onItemClick={handleItemClick}
+                            onAnchorClick={handleAnchorClick}
+                            initialActiveId="Getting_started"
+                            searchable={true}
+                            className="main-toc"
+                        />
+                    </ErrorBoundary>
                 </aside>
 
                 <section className="content-area">
@@ -121,20 +117,25 @@ function App() {
                         </p>
                         <ul>
                             <li>✅ Hierarchical navigation tree</li>
-                            <li>✅ Expand/collapse functionality</li>
+                            <li>✅ Expand/collapse functionality with smooth animations</li>
                             <li>✅ Active item highlighting</li>
-                            <li>✅ Search functionality</li>
+                            <li>✅ Smart search functionality with debouncing</li>
                             <li>✅ Anchor navigation</li>
-                            <li>✅ Keyboard accessibility</li>
-                            <li>✅ Smooth animations</li>
-                            <li>✅ Light/Dark mode support</li>
-                            <li>✅ Asynchronous data loading</li>
+                            <li>✅ Full keyboard accessibility</li>
+                            <li>✅ Smooth expand/collapse animations</li>
+                            <li>✅ Light/Dark mode support (Auto/Manual)</li>
+                            <li>✅ Asynchronous data loading with loading states</li>
                             <li>✅ Level-based backgrounds</li>
+                            <li>✅ Error handling with Error Boundaries</li>
+                            <li>✅ Professional UI with loading indicators</li>
+                            <li>✅ Responsive design</li>
+                            <li>✅ Tree highlighting for active paths</li>
                         </ul>
 
                         <div className="demo-note">
                             <p><strong>Demo Note:</strong> This is a demonstration of the Table of Contents component.
-                                Data is now loaded asynchronously from a mock API endpoint. The component shows proper loading states and error handling.</p>
+                                Data is loaded asynchronously with debounced search functionality. The component shows
+                                proper loading states, error handling with recovery options, and smooth animations throughout.</p>
                         </div>
                     </div>
                 </section>

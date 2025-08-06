@@ -6,6 +6,8 @@ export type UseTableOfContentsOptions = {
     autoExpandActive?: boolean;
     enableSearch?: boolean;
     apiEndpoint?: string;
+    searchDebounceMs?: number;
+    minQueryLength?: number;
 };
 
 export type UseTableOfContentsActions = {
@@ -18,10 +20,11 @@ export type UseTableOfContentsActions = {
 };
 
 export type UseTableOfContentsReturn = {
-    state: TOCState;
     actions: UseTableOfContentsActions;
     api: TOCApi;
-    loading: boolean;
     error: string | null;
     initialized: boolean;
+    isSearching: boolean;
+    loading: boolean;
+    state: TOCState;
 };

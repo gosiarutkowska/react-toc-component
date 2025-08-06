@@ -1,12 +1,11 @@
-// colors.scss - Updated with Figma colors and dark mode support
 $primary-color: #6B57FF;
 $primary-hover: #5A47E6;
 $primary-light: rgba(107, 87, 255, 0.1);
 
 // Light mode colors
-$light-active-bg: #6B57FF;  // Blue background for active items
-$light-active-text: #FFFFFF; // White text on blue background
-$light-tree-highlight-bg: #F4F4F4; // Light gray for tree highlighting
+$light-active-bg: #6B57FF;
+$light-active-text: #FFFFFF;
+$light-tree-highlight-bg: #F4F4F4;
 $light-hover-bg: rgba(107, 87, 255, 0.08);
 $light-hover-text: #6B57FF;
 $light-focus-bg: rgba(107, 87, 255, 0.05);
@@ -15,29 +14,29 @@ $light-border-color: #E5E7EB;
 $light-text-color: #374151;
 $light-text-color-light: #6B7280;
 $light-text-color-lighter: #9CA3AF;
-$light-background-color: #F8F9FA; // Sidebar background
+$light-background-color: #F8F9FA;
 $light-white: #FFFFFF;
 $light-icon-color: #9CA3AF;
 $light-icon-active-color: #FFFFFF;
 $light-icon-hover-color: #6B57FF;
 
-// Light mode level backgrounds
-$light-level-0-bg: transparent; // Root level - transparent
-$light-level-1-bg: #FAFAFA; // First nesting level
-$light-level-2-bg: #F4F4F4; // Second nesting level
-$light-level-3-bg: #EEEEEE; // Third nesting level and beyond
+// Light mode level background
+$light-level-0-bg: transparent;
+$light-level-1-bg: #FAFAFA;
+$light-level-2-bg: #F4F4F4;
+$light-level-3-bg: #EEEEEE;
 
 // Dark mode colors (from Figma)
-$dark-background-color: #19191C; // Dark background
-$dark-hover-bg: #252527; // Hover background
-$dark-first-level-active-bg: #252527; // First level active background
-$dark-active-bg: #7B61FF; // Purple active background
-$dark-third-level-bg: #303033; // Third level nesting background
+$dark-background-color: #19191C;
+$dark-hover-bg: #252527;
+$dark-first-level-active-bg: #252527;
+$dark-active-bg: #7B61FF;
+$dark-third-level-bg: #303033;
 $dark-text-color: #FFFFFF;
 $dark-text-color-light: #B0B0B0;
 $dark-text-color-lighter: #808080;
 $dark-border-color: #333333;
-$dark-focus-border: #7B61FF; // Focus border in dark mode
+$dark-focus-border: #7B61FF;
 $dark-icon-color: #B0B0B0;
 $dark-icon-active-color: #FFFFFF;
 $dark-icon-hover-color: #7B61FF;
@@ -48,7 +47,7 @@ $dark-level-1-bg: #303033; // First nesting level
 $dark-level-2-bg: #252527; // Second nesting level
 $dark-level-3-bg: #2A2A2D; // Third nesting level and beyond
 
-// Current theme variables (will be overridden by CSS custom properties)
+// Current theme variabless
 $active-bg: var(--active-bg, #{$light-active-bg});
 $active-text: var(--active-text, #{$light-active-text});
 $tree-highlight-bg: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
@@ -77,12 +76,12 @@ $error-color: #DC2626;
 
 // sizes.scss
 $base-spacing: 8px;
-$indent-step: 20px; // Increased for better hierarchy visibility
+$indent-step: 20px;
 
 // borders.scss
-$border-radius: 4px; // Used only for inputs and buttons, not for active items
+$border-radius: 4px;
 
 // transitions.scss
-$transition-duration: 0.15s; // Reduced from 0.2s for snappier feel
+$transition-duration: 0.15s;
 $transition-easing: ease-in-out;
 $expand-duration: 0.25s;

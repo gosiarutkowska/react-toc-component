@@ -1,8 +1,8 @@
 @use '../../styles/variables' as *;
 
 .container {
-  width: 320px; // Fixed width - no max-width to prevent jumping
-  min-width: 320px; // Ensure minimum width
+  width: 320px;
+  min-width: 320px;
   height: 100vh;
   background-color: $background-color;
   border-right: 1px solid $border-color;
@@ -12,7 +12,7 @@
   font-size: 13px;
   line-height: 1.4;
   overflow: hidden;
-  flex-shrink: 0; // Prevent shrinking
+  flex-shrink: 0;
 }
 
 .loading {
@@ -64,12 +64,13 @@
   position: relative;
   display: flex;
   align-items: center;
+  gap: 0;
 }
 
 .searchInput {
   width: 100%;
   padding: 8px $base-spacing * 1.5;
-  padding-right: 32px;
+  padding-right: 40px;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   font-size: 12px;
@@ -91,7 +92,7 @@
 
 .clearButton {
   position: absolute;
-  right: 8px;
+  right: 32px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -103,6 +104,7 @@
   line-height: 1;
   border-radius: $border-radius;
   transition: all $transition-duration $transition-easing;
+  z-index: 2;
 
   &:hover {
     color: $text-color;
@@ -113,6 +115,44 @@
     outline: 2px solid $focus-border;
     outline-offset: 1px;
   }
+}
+
+.searchSpinner {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.searchSpinnerIcon {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $border-color;
+  border-top: 2px solid $primary-color;
+  border-radius: 50%;
+  animation: searchSpin 1s linear infinite;
+}
+
+@keyframes searchSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.searchStatus {
+  padding: $base-spacing 0 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.searchResults {
+  color: $text-color-light;
+  font-style: italic;
+}
+
+.searchNoResults {
+  color: $text-color-lighter;
+  font-style: italic;
 }
 
 .controls {
@@ -150,6 +190,18 @@
     background-color: $primary-light;
     transform: translateY(1px);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: $white;
+      border-color: $border-color;
+      color: $text-color;
+      transform: none;
+    }
+  }
 }
 
 .navigation {
@@ -171,6 +223,20 @@
   color: $text-color-light;
   font-size: 12px;
   font-style: italic;
+
+  p {
+    margin: 0 0 $base-spacing 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.emptyHint {
+  margin-top: $base-spacing;
+  color: $text-color-lighter;
+  font-size: 11px;
 }
 
 // Custom scrollbar styling
@@ -217,7 +283,7 @@
 }
 
 // High contrast mode support
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   .container {
     border-right-width: 2px;
   }

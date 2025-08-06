@@ -15,7 +15,6 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
     const showAnchors = item.isActive && hasAnchors;
     const shouldShowExpanded = item.isExpanded || isSearching;
 
-    // Helper function to check if this item or any of its descendants is active
     const isInActiveTree = (currentItem: TOCItem): boolean => {
         if (currentItem.isActive) return true;
         return currentItem.children.some(child => isInActiveTree(child));
@@ -26,12 +25,10 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
     const handleItemClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
 
-        // If item has children, toggle expand on click
         if (hasChildren && onToggleExpand) {
             onToggleExpand(item.id);
         }
 
-        // Always trigger the item click callback
         if (onItemClick) {
             onItemClick(item);
         }
@@ -80,7 +77,6 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
     };
 
     const getIndentLevel = (): number => {
-        // For search results, reduce indentation to improve readability
         if (isSearching) {
             return Math.min(item.level, 2);
         }
@@ -107,7 +103,6 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
                     '--indent-level': getIndentLevel()
                 } as React.CSSProperties}
             >
-                {/* Main item button */}
                 <button
                     className={styles.itemButton}
                     onClick={handleItemClick}
@@ -119,7 +114,6 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
                         : item.title
                     }
                 >
-                    {/* Expand/Collapse Icon - shows proper triangle based on state */}
                     {hasChildren && (
                         <ExpandIcon
                             isExpanded={shouldShowExpanded}
@@ -127,7 +121,6 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
                         />
                     )}
 
-                    {/* Item Title */}
                     <span className={styles.itemTitle}>
                         {item.title}
                     </span>
@@ -175,5 +168,3 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
         </li>
     );
 };
-
-export default TableOfContentsItem;

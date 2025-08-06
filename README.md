@@ -1,69 +1,211 @@
-# React + TypeScript + Vite
+# React Table of Contents Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A professional Table of Contents component built with React, TypeScript, and SASS for complex documentation sites.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **📚 Hierarchical Navigation** - Multi-level tree with expand/collapse
+- **🔍 Smart Search** - Debounced search with loading indicators
+- **⚡ Asynchronous Loading** - API data loading with proper states
+- **🎯 Active State Management** - Highlights current page and parent tree
+- **⚓ Anchor Support** - Navigate to page sections
+- **🎨 Smooth Animations** - Cubic-bezier transitions for expand/collapse
+- **🌓 Theme Support** - Light/Dark mode with system preference
+- **⌨️ Keyboard Navigation** - Full accessibility support
+- **📱 Responsive Design** - Works on all devices
+- **🛡️ Error Boundaries** - Graceful error handling
+- **📦 TypeScript** - Fully typed with comprehensive interfaces
 
-## Expanding the ESLint configuration
+## 🚀 How to Run
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# Install dependencies
+npm install
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# Start development server
+npm run dev
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+# Build for production
+npm run build
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Run tests
+npm test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎯 Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Basic Usage
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```tsx
+import { TableOfContents } from './components/TableOfContents';
+
+function App() {
+  return (
+    <TableOfContents
+      searchable={true}
+      onItemClick={(item) => console.log('Navigate to:', item.url)}
+      initialActiveId="getting-started"
+    />
+  );
+}
 ```
+
+### With Custom Data
+
+```tsx
+import { TableOfContents } from './components/TableOfContents';
+
+const customData = {
+  entities: {
+    pages: {
+      'intro': {
+        id: 'intro',
+        title: 'Introduction',
+        url: '/docs/intro',
+        level: 0,
+        pages: [],
+        anchors: []
+      }
+    },
+    anchors: {}
+  },
+  topLevelIds: ['intro']
+};
+
+<TableOfContents 
+  data={customData} 
+  searchable={true}
+/>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `data` | `JetBrainsHelpTOC` | `undefined` | TOC data structure |
+| `onItemClick` | `(item: TOCItem) => void` | `undefined` | Item click callback |
+| `onAnchorClick` | `(anchor: TOCAnchor) => void` | `undefined` | Anchor click callback |
+| `initialActiveId` | `string` | `undefined` | Initially active item ID |
+| `searchable` | `boolean` | `false` | Enable search functionality |
+| `className` | `string` | `undefined` | Additional CSS class |
+
+### API Methods
+
+```tsx
+const { api } = useTableOfContents();
+
+api.setActiveById('page-id');    // Set active item
+api.expandAll();                 // Expand all items
+api.collapseAll();              // Collapse all items
+api.filterByString('search');   // Filter by search term
+api.clearFilter();              // Clear search filter
+api.getActiveItem();            // Get currently active item
+```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── components/
+│   ├── ErrorBoundary/          # Error handling
+│   └── TableOfContents/        # Main TOC components
+├── hooks/
+│   ├── useDebounced.ts         # Debounced values
+│   ├── useTableOfContents.ts   # Main TOC logic
+│   └── useTOCState.ts         # State management
+├── types/                      # TypeScript definitions
+├── utils/                      # Helper functions
+├── styles/                     # SASS stylesheets
+└── test/                       # Test files
+```
+
+## 🧪 Testing
+
+```bash
+npm test                 # Run all tests
+npm run test:coverage   # Run with coverage
+npm run test:ui         # Interactive test UI
+```
+
+Tests include:
+- Unit tests for components and hooks
+- Integration tests for user interactions
+- Accessibility testing
+- Error boundary testing
+
+## 🎨 Customization
+
+### Theme Variables
+
+```scss
+:root {
+  --active-bg: #6B57FF;
+  --hover-bg: rgba(107, 87, 255, 0.08);
+  --level-1-bg: #FAFAFA;
+  --level-2-bg: #F4F4F4;
+}
+
+:root[data-theme="dark"] {
+  --active-bg: #7B61FF;
+  --hover-bg: #252527;
+  --level-1-bg: #303033;
+  --level-2-bg: #252527;
+}
+```
+
+## ♿ Accessibility
+
+- **Keyboard navigation** support
+- **Screen reader** support with ARIA labels
+- **Focus management** with visible indicators
+- **High contrast** mode support
+- **Touch-friendly** targets for mobile
+
+### Keyboard Shortcuts
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Navigate between items |
+| `Enter` `Space` | Activate/Expand item |
+| `→` | Expand collapsed item |
+| `←` | Collapse expanded item |
+
+## 🔧 Configuration
+
+Environment variables:
+```env
+VITE_TOC_API_ENDPOINT=/api/jetbrainsHelpTOC.json
+VITE_SEARCH_DEBOUNCE=400
+```
+
+## 📦 Tech Stack
+
+- **React 19** with TypeScript
+- **SASS Modules** for styling
+- **Vite** for build tooling
+- **Vitest** for testing
+- **ESLint + Prettier** for code quality
+
+## 🚀 Assignment Requirements
+
+✅ **All Required Features Implemented:**
+- React + TypeScript + SASS
+- Asynchronous JSON data loading
+- Loading placeholder during data fetch
+- Root element click toggles expand/collapse
+- Smooth color and icon animations
+- Functional tests (Vitest + Testing Library)
+
+✅ **Nice-to-Have Features:**
+- JS API for programmatic control
+- Topic filtering with search input
+- Loading indicators during search
+- Expand/collapse animations
+
+✅ **Additional Improvements:**
+- Error boundaries for better reliability
+- Theme system with dark mode
+- Keyboard accessibility
+- Responsive design

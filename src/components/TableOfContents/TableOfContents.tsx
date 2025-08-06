@@ -13,15 +13,24 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                                                                     className,
                                                                     apiEndpoint = '/api/toc',
                                                                 }) => {
-    const { state, actions, loading, error } = useTableOfContents({
+    const {
+        state,
+        actions,
+        loading,
+        error,
+        isSearching
+    } = useTableOfContents({
         data,
         initialActiveId,
         enableSearch: searchable,
         apiEndpoint,
+        searchDebounceMs: 400,
+        minQueryLength: 2,
     });
 
     const { items, searchQuery, filteredItems } = state;
     const displayItems = filteredItems || items;
+    const isShowingSearchResults = !!filteredItems;
 
     const handleItemClick = (item: TOCItem): void => {
         actions.setActiveItem(item.id);
@@ -29,7 +38,8 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        actions.setSearchQuery(e.target.value);
+        const query = e.target.value;
+        actions.setSearchQuery(query);
     };
 
     const clearSearch = (): void => {
@@ -38,7 +48,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
 
     const handleCollapseAll = (): void => {
         actions.collapseAll();
-        // If we're searching, also clear search to see the effect
+
         if (searchQuery) {
             actions.clearSearch();
         }
@@ -72,21 +82,44 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                     <div className={styles.searchInputWrapper}>
                         <input
                             type="text"
-                            placeholder="Search..."
+                            placeholder="Search documentation..."
                             value={searchQuery}
                             onChange={handleSearchChange}
                             className={styles.searchInput}
+                            autoComplete="off"
+                            spellCheck={false}
                         />
                         {searchQuery && (
                             <button
                                 onClick={clearSearch}
                                 className={styles.clearButton}
                                 aria-label="Clear search"
+                                title="Clear search"
                             >
                                 ×
                             </button>
                         )}
+                        {isSearching && (
+                            <div className={styles.searchSpinner} aria-label="Searching...">
+                                <div className={styles.searchSpinnerIcon}></div>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Search status */}
+                    {searchQuery && searchQuery.length >= 2 && !isSearching && (
+                        <div className={styles.searchStatus}>
+                            {isShowingSearchResults ? (
+                                <span className={styles.searchResults}>
+                                    Found {displayItems.length} result{displayItems.length !== 1 ? 's' : ''} for "{searchQuery}"
+                                </span>
+                            ) : (
+                                <span className={styles.searchNoResults}>
+                                    No results found for "{searchQuery}"
+                                </span>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -95,6 +128,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                     onClick={actions.expandAll}
                     className={styles.controlButton}
                     title="Expand All"
+                    disabled={isShowingSearchResults}
                 >
                     Expand All
                 </button>
@@ -103,14 +137,23 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                     className={styles.controlButton}
                     title="Collapse All"
                 >
-                    Collapse All
+                    {searchQuery ? 'Clear & Collapse' : 'Collapse All'}
                 </button>
             </div>
 
             <nav className={styles.navigation} role="navigation" aria-label="Table of contents">
                 {displayItems.length === 0 ? (
                     <div className={styles.empty}>
-                        {searchQuery ? 'No matching items found.' : 'No items to display.'}
+                        {searchQuery && searchQuery.length >= 2 ? (
+                            <>
+                                <p>No matching items found for "{searchQuery}"</p>
+                                <p className={styles.emptyHint}>Try a different search term or browse the full tree.</p>
+                            </>
+                        ) : searchQuery ? (
+                            <p>Type at least 2 characters to search...</p>
+                        ) : (
+                            <p>No items to display.</p>
+                        )}
                     </div>
                 ) : (
                     <ul className={styles.list}>
@@ -121,7 +164,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                                 onItemClick={handleItemClick}
                                 onAnchorClick={onAnchorClick}
                                 onToggleExpand={actions.toggleExpanded}
-                                isSearching={!!searchQuery}
+                                isSearching={isShowingSearchResults}
                             />
                         ))}
                     </ul>

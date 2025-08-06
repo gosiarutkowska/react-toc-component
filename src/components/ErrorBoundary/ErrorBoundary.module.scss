@@ -1,0 +1,237 @@
+@use '../../styles/variables' as *;
+
+.errorBoundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: $base-spacing * 3;
+  background-color: $white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
+
+.errorContent {
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.errorIcon {
+  font-size: 48px;
+  margin-bottom: $base-spacing * 2;
+  opacity: 0.7;
+}
+
+.errorTitle {
+  color: $error-color;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 $base-spacing 0;
+}
+
+.errorMessage {
+  color: $text-color-light;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 $base-spacing * 3 0;
+}
+
+.errorDetails {
+  text-align: left;
+  margin: $base-spacing * 2 0;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background-color: #f8f9fa;
+
+  summary {
+    padding: $base-spacing * 1.5;
+    cursor: pointer;
+    font-weight: 500;
+    color: $text-color;
+
+    &:hover {
+      background-color: $hover-bg;
+    }
+  }
+}
+
+.errorStack {
+  padding: $base-spacing * 1.5;
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: $error-color;
+  background-color: #fff;
+  border-top: 1px solid $border-color;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.errorActions {
+  display: flex;
+  gap: $base-spacing * 1.5;
+  justify-content: center;
+  margin-top: $base-spacing * 2;
+}
+
+.retryButton,
+.reloadButton {
+  padding: $base-spacing * 1.5 $base-spacing * 3;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-duration $transition-easing;
+
+  &:focus {
+    outline: 2px solid $focus-border;
+    outline-offset: 2px;
+  }
+}
+
+.retryButton {
+  background-color: $primary-color;
+  color: white;
+  border-color: $primary-color;
+
+  &:hover {
+    background-color: $primary-hover;
+    border-color: $primary-hover;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.reloadButton {
+  background-color: $white;
+  color: $text-color;
+
+  &:hover {
+    background-color: $hover-bg;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// Dark mode support
+:root[data-theme="dark"] {
+  .errorBoundary {
+    background-color: var(--background-color);
+    border-color: var(--border-color);
+  }
+
+  .errorTitle {
+    color: #ff6b6b;
+  }
+
+  .errorMessage {
+    color: var(--text-color-light);
+  }
+
+  .errorDetails {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: var(--border-color);
+
+    summary {
+      color: var(--text-color);
+
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+    }
+  }
+
+  .errorStack {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-color);
+    color: #ff6b6b;
+  }
+
+  .reloadButton {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-color: var(--border-color);
+
+    &:hover {
+      background-color: var(--hover-bg);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    .errorBoundary {
+      background-color: var(--background-color);
+      border-color: var(--border-color);
+    }
+
+    .errorTitle {
+      color: #ff6b6b;
+    }
+
+    .errorMessage {
+      color: var(--text-color-light);
+    }
+
+    .errorDetails {
+      background-color: rgba(255, 255, 255, 0.02);
+      border-color: var(--border-color);
+
+      summary {
+        color: var(--text-color);
+
+        &:hover {
+          background-color: var(--hover-bg);
+        }
+      }
+    }
+
+    .errorStack {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color);
+      color: #ff6b6b;
+    }
+
+    .reloadButton {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      border-color: var(--border-color);
+
+      &:hover {
+        background-color: var(--hover-bg);
+        border-color: $primary-color;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .errorBoundary {
+    padding: $base-spacing * 2;
+  }
+
+  .errorActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .retryButton,
+  .reloadButton {
+    width: 100%;
+  }
+}

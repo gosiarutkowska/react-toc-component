@@ -2,20 +2,38 @@ import { useState, useEffect, useMemo } from 'react';
 import type { TOCApi } from '../types';
 import { parseTableOfContentsData, findItemById, filterTreeByQuery } from '../utils';
 import { useTOCState } from './useTOCState';
+import { useDebounced } from './useDebounced';
 import type { UseTableOfContentsOptions, UseTableOfContentsReturn } from './useTableOfContents.types';
 
 export const useTableOfContents = (
     options: UseTableOfContentsOptions = {}
 ): UseTableOfContentsReturn => {
-    const { data, initialActiveId, autoExpandActive = true, enableSearch = true } = options;
+    const {
+        data,
+        initialActiveId,
+        autoExpandActive = true,
+        enableSearch = true,
+        searchDebounceMs = 400,
+        minQueryLength = 1
+    } = options;
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [initialized, setInitialized] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
 
     const { state, updateState, actions } = useTOCState();
 
-    // Load data asynchronously - either from API or provided data
+    const debouncedSearchQuery = useDebounced(state.searchQuery, searchDebounceMs);
+
+    useEffect(() => {
+        if (state.searchQuery !== debouncedSearchQuery) {
+            setIsSearching(true);
+        } else {
+            setIsSearching(false);
+        }
+    }, [state.searchQuery, debouncedSearchQuery]);
+
     useEffect(() => {
         if (initialized) return;
 
@@ -27,12 +45,9 @@ export const useTableOfContents = (
                 let tocData;
 
                 if (data) {
-                    // Use provided data
                     tocData = data;
                 } else {
-                    // Fetch from public API endpoint with fallback
                     try {
-                        // Try the public API first
                         const response = await fetch('/api/jetbrainsHelpTOC.json');
 
                         if (!response.ok) {
@@ -45,7 +60,6 @@ export const useTableOfContents = (
                     } catch (apiError) {
                         console.warn('🔄 API failed, trying direct public file:', apiError);
 
-                        // Fallback to direct public file access
                         const fallbackResponse = await fetch('/api/jetbrainsHelpTOC.json');
 
                         if (!fallbackResponse.ok) {
@@ -60,12 +74,10 @@ export const useTableOfContents = (
                     await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 300));
                 }
 
-                // Validate data structure
                 if (!tocData?.entities?.pages) {
                     throw new Error('Invalid TOC data structure - missing entities.pages');
                 }
 
-                // Parse the data
                 const parsedItems = parseTableOfContentsData(tocData);
                 console.log('✅ Parsed TOC items:', parsedItems.length);
 
@@ -74,7 +86,6 @@ export const useTableOfContents = (
                     items: parsedItems,
                 }));
 
-                // Set initial active item if provided
                 if (initialActiveId) {
                     setTimeout(() => {
                         actions.setActiveItem(initialActiveId, autoExpandActive);
@@ -96,15 +107,19 @@ export const useTableOfContents = (
         loadData();
     }, [data, initialActiveId, autoExpandActive, initialized, updateState, actions]);
 
-    // Search functionality
     const filteredItems = useMemo(() => {
-        if (!enableSearch || !state.searchQuery.trim()) {
+        if (!enableSearch) {
             return null;
         }
-        return filterTreeByQuery(state.items, state.searchQuery);
-    }, [state.items, state.searchQuery, enableSearch]);
 
-    // Update filtered items
+        if (!debouncedSearchQuery.trim() || debouncedSearchQuery.length < minQueryLength) {
+            return null;
+        }
+
+        console.log('🔍 Filtering with debounced query:', debouncedSearchQuery);
+        return filterTreeByQuery(state.items, debouncedSearchQuery);
+    }, [state.items, debouncedSearchQuery, enableSearch, minQueryLength]);
+
     useEffect(() => {
         if (initialized) {
             updateState(prev => ({
@@ -119,8 +134,14 @@ export const useTableOfContents = (
         setActiveById: (id: string) => actions.setActiveItem(id),
         expandAll: actions.expandAll,
         collapseAll: actions.collapseAll,
-        filterByString: actions.setSearchQuery,
-        clearFilter: actions.clearSearch,
+        filterByString: (query: string) => {
+            actions.setSearchQuery(query);
+            console.log('🔍 Search query set:', query);
+        },
+        clearFilter: () => {
+            actions.clearSearch();
+            console.log('🧹 Search cleared');
+        },
         getActiveItem: () => {
             if (!state.activeItemId) return null;
             return findItemById(state.items, state.activeItemId);
@@ -128,6 +149,7 @@ export const useTableOfContents = (
         reload: async () => {
             setInitialized(false);
             setError(null);
+            actions.clearSearch();
         }
     }), [state.activeItemId, state.items, actions]);
 
@@ -138,6 +160,7 @@ export const useTableOfContents = (
         loading,
         error,
         initialized,
+        isSearching,
     };
 };
 

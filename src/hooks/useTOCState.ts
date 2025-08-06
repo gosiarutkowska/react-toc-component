@@ -96,7 +96,6 @@ export const useTOCState = (initialItems: TOCItem[] = [], initialActiveId?: stri
             ...prev,
             items: collapseAllItems(prev.items),
             expandedItems: new Set(),
-            // Also clear search if active
             searchQuery: '',
             filteredItems: null,
         }));

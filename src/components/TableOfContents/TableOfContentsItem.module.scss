@@ -6,8 +6,6 @@
   box-shadow: none !important;
   outline: none !important;
 
-  // Level-based background colors - FIXED implementation
-  // Light mode defaults
   background-color: var(--level-0-bg);
 
   &[data-level="1"] {
@@ -18,32 +16,28 @@
     background-color: var(--level-2-bg);
   }
 
-  // Level 3 and beyond
+  // level 3 and beyond
   &[data-level]:not([data-level="0"]):not([data-level="1"]):not([data-level="2"]) {
     background-color: var(--level-3-bg);
   }
 
-  // Ensure no pseudo-elements create lines
   &::before,
   &::after {
     display: none !important;
   }
 
-  // Tree highlighting - override level backgrounds when highlighting tree
   &.treeHighlight:not(.active) {
     background-color: var(--tree-highlight-bg) !important;
     transition: background-color 0.3s ease-out;
 
-    // All nested items should also have tree highlight background
     .item:not(.active) {
       background-color: var(--tree-highlight-bg) !important;
       transition: background-color 0.3s ease-out;
     }
   }
 
-  // Active state - highest priority
   &.active {
-    background-color: transparent !important; // Active items have transparent background on .item level
+    background-color: transparent !important;
     transition: none !important;
 
     > .itemContent {
@@ -63,7 +57,6 @@
     }
   }
 
-  // Hover state (only when not active and not tree highlighted)
   &:not(.active):not(.treeHighlight):hover {
     > .itemContent {
       background-color: var(--hover-bg) !important;
@@ -89,7 +82,7 @@
   border-radius: 0;
   margin: 0;
   border: none;
-  background-color: transparent; // Content should be transparent by default
+  background-color: transparent;
 }
 
 .itemButton {
@@ -160,12 +153,10 @@
   color: var(--icon-color);
   transition: color $transition-duration $transition-easing;
 
-  // Active state icon color
   .item.active > .itemContent & {
     color: var(--icon-active-color);
   }
 
-  // Hover state icon color (when not active)
   .item:not(.active):hover > .itemContent & {
     color: var(--icon-hover-color);
   }
@@ -180,14 +171,13 @@
   hyphens: auto;
   max-width: calc(100% - 28px);
 
-  // For items without children, add left margin to align with items that have icons
   .item:not(.hasChildren) & {
     margin-left: 28px;
     max-width: calc(100% - 56px);
   }
 }
 
-// Children list styling
+
 .childrenList {
   list-style: none;
   padding: 0;
@@ -198,11 +188,23 @@
 
   max-height: 2000px;
   opacity: 1;
-  transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
+  transform: translateY(0);
+  transition:
+          max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.25s ease-out,
+          transform 0.25s ease-out;
 
   .item:not(.expanded) & {
     max-height: 0;
     opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  .item.searching & {
+    transition:
+            max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.15s ease-out,
+            transform 0.15s ease-out;
   }
 }
 
@@ -308,7 +310,7 @@
   }
 }
 
-// Animations
+// animations
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -318,7 +320,6 @@
   }
 }
 
-// States for better UX
 .item {
   &.hasChildren {
     > .itemContent {
@@ -336,7 +337,7 @@
 }
 
 // High contrast mode
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
   .item.active > .itemContent {
     background-color: #000;
     color: #fff;
@@ -354,7 +355,6 @@
   }
 }
 
-// Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   .item,
   .itemContent,
