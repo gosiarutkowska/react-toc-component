@@ -5,6 +5,7 @@ export type UseTableOfContentsOptions = {
     initialActiveId?: string;
     autoExpandActive?: boolean;
     enableSearch?: boolean;
+    apiEndpoint?: string;
 };
 
 export type UseTableOfContentsActions = {
@@ -22,4 +23,5 @@ export type UseTableOfContentsReturn = {
     api: TOCApi;
     loading: boolean;
     error: string | null;
+    initialized: boolean;
 };

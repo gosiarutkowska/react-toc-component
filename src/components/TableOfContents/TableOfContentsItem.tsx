@@ -23,55 +23,51 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
 
     const shouldHighlightTree = !item.isActive && isInActiveTree(item); // Only highlight if NOT active
 
-    const handleToggleExpand = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (hasChildren) {
-            onToggleExpand?.(item.id);
-        }
-    };
-
-    const handleItemClick = (e: React.MouseEvent) => {
+    const handleItemClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
 
         // If item has children, toggle expand on click
-        if (hasChildren) {
-            onToggleExpand?.(item.id);
+        if (hasChildren && onToggleExpand) {
+            onToggleExpand(item.id);
         }
 
         // Always trigger the item click callback
-        onItemClick?.(item);
+        if (onItemClick) {
+            onItemClick(item);
+        }
     };
 
-    const handleAnchorClick = (anchor: TOCAnchor) => (e: React.MouseEvent) => {
+    const handleAnchorClick = (anchor: TOCAnchor) => (e: React.MouseEvent<HTMLButtonElement>): void => {
         e.preventDefault();
         e.stopPropagation();
-        onAnchorClick?.(anchor);
+        if (onAnchorClick) {
+            onAnchorClick(anchor);
+        }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>): void => {
         switch (e.key) {
             case 'Enter':
             case ' ':
                 e.preventDefault();
-                handleItemClick(e as any);
+                handleItemClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
                 break;
             case 'ArrowRight':
-                if (hasChildren && !item.isExpanded) {
+                if (hasChildren && !item.isExpanded && onToggleExpand) {
                     e.preventDefault();
-                    onToggleExpand?.(item.id);
+                    onToggleExpand(item.id);
                 }
                 break;
             case 'ArrowLeft':
-                if (hasChildren && item.isExpanded) {
+                if (hasChildren && item.isExpanded && onToggleExpand) {
                     e.preventDefault();
-                    onToggleExpand?.(item.id);
+                    onToggleExpand(item.id);
                 }
                 break;
         }
     };
 
-    const getItemClasses = () => {
+    const getItemClasses = (): string => {
         const classes = [styles.item];
 
         if (item.isActive) classes.push(styles.active);
@@ -83,7 +79,7 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
         return classes.join(' ');
     };
 
-    const getIndentLevel = () => {
+    const getIndentLevel = (): number => {
         // For search results, reduce indentation to improve readability
         if (isSearching) {
             return Math.min(item.level, 2);
@@ -91,9 +87,16 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
         return item.level;
     };
 
-    const getChildrenListClasses = () => {
+    const getChildrenListClasses = (): string => {
         const classes = [styles.childrenList];
         return classes.join(' ');
+    };
+
+    const handleAnchorKeyDown = (anchor: TOCAnchor) => (e: React.KeyboardEvent<HTMLButtonElement>): void => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleAnchorClick(anchor)(e as unknown as React.MouseEvent<HTMLButtonElement>);
+        }
     };
 
     return (
@@ -135,7 +138,7 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
             {showAnchors && (
                 <ul className={styles.anchorsList}>
                     {item.anchors.map((anchor) => (
-                        <li key={anchor.id} className={styles.anchorItem}>
+                        <li key={anchor.id} className={styles.anchorItem} data-level={getIndentLevel()}>
                             <button
                                 className={styles.anchorButton}
                                 onClick={handleAnchorClick(anchor)}
@@ -143,12 +146,7 @@ export const TableOfContentsItem: React.FC<TableOfContentsItemProps> = ({
                                 style={{
                                     '--indent-level': getIndentLevel() + 1
                                 } as React.CSSProperties}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' || e.key === ' ') {
-                                        e.preventDefault();
-                                        handleAnchorClick(anchor)(e as any);
-                                    }
-                                }}
+                                onKeyDown={handleAnchorKeyDown(anchor)}
                             >
                                 <span className={styles.anchorTitle}>
                                     {anchor.title}

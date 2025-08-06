@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { TableOfContents } from './components/TableOfContents';
-import type { JetBrainsHelpTOC, TOCItem, TOCAnchor } from './types';
-import jetbrainsData from './data/jetbrainsHelpTOC.json';
-// Remove App.css import - we'll use global styles
+import type { TOCItem, TOCAnchor } from './types';
 
 function App() {
     const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null); // null = system preference
@@ -22,7 +20,7 @@ function App() {
             setIsDarkMode(null);
         }
 
-        const handleChange = (e: MediaQueryListEvent) => {
+        const handleChange = (): void => {
             // Only update if user hasn't manually set a preference
             const currentSaved = localStorage.getItem('theme-preference');
             if (!currentSaved) {
@@ -51,7 +49,7 @@ function App() {
         }
     }, [isDarkMode]);
 
-    const handleItemClick = (item: TOCItem) => {
+    const handleItemClick = (item: TOCItem): void => {
         console.log('Clicked item:', item);
         // In real app, navigate to the page
         if (item.url) {
@@ -59,7 +57,7 @@ function App() {
         }
     };
 
-    const handleAnchorClick = (anchor: TOCAnchor) => {
+    const handleAnchorClick = (anchor: TOCAnchor): void => {
         console.log('Clicked anchor:', anchor);
         // In real app, navigate to the anchor
         const fullUrl = `${anchor.url}${anchor.anchor}`;
@@ -103,7 +101,7 @@ function App() {
             <main className="app-main">
                 <aside className="toc-sidebar">
                     <TableOfContents
-                        data={jetbrainsData as JetBrainsHelpTOC}
+                        // Remove the data prop to use async loading
                         onItemClick={handleItemClick}
                         onAnchorClick={handleAnchorClick}
                         initialActiveId="Getting_started"
@@ -130,11 +128,13 @@ function App() {
                             <li>✅ Keyboard accessibility</li>
                             <li>✅ Smooth animations</li>
                             <li>✅ Light/Dark mode support</li>
+                            <li>✅ Asynchronous data loading</li>
+                            <li>✅ Level-based backgrounds</li>
                         </ul>
 
                         <div className="demo-note">
                             <p><strong>Demo Note:</strong> This is a demonstration of the Table of Contents component.
-                                In a real application, clicking on items would navigate to actual documentation pages.</p>
+                                Data is now loaded asynchronously from a mock API endpoint. The component shows proper loading states and error handling.</p>
                         </div>
                     </div>
                 </section>

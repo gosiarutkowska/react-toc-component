@@ -1,4 +1,5 @@
-@import './variables';
+@use './variables' as *;
+@use 'sass:color';
 
 // Global animations for TOC
 @keyframes fadeIn {
@@ -98,15 +99,15 @@ body {
   line-height: 1.4;
   font-size: 14px;
   margin: 0;
-  display: block; // Override Vite's default
-  place-items: initial; // Override Vite's default
-  min-width: initial; // Override Vite's default
-  min-height: initial; // Override Vite's default
+  display: block;
+  place-items: initial;
+  min-width: initial;
+  min-height: initial;
 }
 
 // Focus styles for better accessibility - NO OUTLINES as per Figma design
 *:focus-visible {
-  outline: none; // Remove all default outlines to match Figma design
+  outline: none;
 }
 
 // Button reset
@@ -120,9 +121,9 @@ button {
   padding: 0;
   margin: 0;
   cursor: pointer;
-  border-radius: initial; // Override Vite's default
-  border: initial; // Override Vite's default
-  font-weight: initial; // Override Vite's default
+  border-radius: initial;
+  border: initial;
+  font-weight: initial;
 
   &:disabled {
     cursor: not-allowed;
@@ -130,12 +131,12 @@ button {
   }
 
   &:hover {
-    border-color: initial; // Override Vite's default
+    border-color: initial;
   }
 
   &:focus,
   &:focus-visible {
-    outline: none; // Override Vite's default
+    outline: none;
   }
 }
 
@@ -143,11 +144,11 @@ button {
 a {
   color: inherit;
   text-decoration: none;
-  font-weight: initial; // Override Vite's default
+  font-weight: initial;
 
   &:hover {
     text-decoration: underline;
-    color: inherit; // Override Vite's default
+    color: inherit;
   }
 }
 
@@ -156,8 +157,8 @@ ul, ol, li {
   list-style: none;
   padding: 0;
   margin: 0;
-  border: none !important; // Force remove any borders
-  outline: none !important; // Force remove any outlines
+  border: none !important;
+  outline: none !important;
 }
 
 // Heading reset
@@ -165,7 +166,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
-  font-size: inherit; // Override Vite's default
+  font-size: inherit;
 }
 
 // Input reset
@@ -376,7 +377,6 @@ textarea,
 
 // High contrast mode support
 @media (prefers-contrast: high) {
-  // Only in high contrast mode, we can add subtle focus indicators
   *:focus-visible {
     outline: 2px solid currentColor !important;
     outline-offset: 2px;
@@ -466,7 +466,6 @@ textarea,
   --active-bg: #{$light-active-bg};
   --active-text: #{$light-active-text};
   --tree-highlight-bg: #{$light-tree-highlight-bg};
-  --nested-bg: transparent; // Light mode - level 0 transparent, nested will be overridden
   --hover-bg: #{$light-hover-bg};
   --hover-text: #{$light-hover-text};
   --focus-bg: #{$light-focus-bg};
@@ -480,6 +479,12 @@ textarea,
   --icon-color: #{$light-icon-color};
   --icon-active-color: #{$light-icon-active-color};
   --icon-hover-color: #{$light-icon-hover-color};
+
+  // Level backgrounds
+  --level-0-bg: #{$light-level-0-bg};
+  --level-1-bg: #{$light-level-1-bg};
+  --level-2-bg: #{$light-level-2-bg};
+  --level-3-bg: #{$light-level-3-bg};
 }
 
 // Explicit light theme
@@ -487,7 +492,6 @@ textarea,
   --active-bg: #{$light-active-bg};
   --active-text: #{$light-active-text};
   --tree-highlight-bg: #{$light-tree-highlight-bg};
-  --nested-bg: #{$light-nested-bg}; // Light nested background for levels 1+
   --hover-bg: #{$light-hover-bg};
   --hover-text: #{$light-hover-text};
   --focus-bg: #{$light-focus-bg};
@@ -501,31 +505,47 @@ textarea,
   --icon-color: #{$light-icon-color};
   --icon-active-color: #{$light-icon-active-color};
   --icon-hover-color: #{$light-icon-hover-color};
+
+  // Level backgrounds
+  --level-0-bg: #{$light-level-0-bg};
+  --level-1-bg: #{$light-level-1-bg};
+  --level-2-bg: #{$light-level-2-bg};
+  --level-3-bg: #{$light-level-3-bg};
 }
+
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --nested-bg: #{$light-nested-bg}; // Light nested background for levels 1+
+    --level-0-bg: #{$light-level-0-bg};
+    --level-1-bg: #{$light-level-1-bg};
+    --level-2-bg: #{$light-level-2-bg};
+    --level-3-bg: #{$light-level-3-bg};
   }
 }
+
 // Dark mode color variables
 :root[data-theme="dark"] {
---active-bg: #{$dark-active-bg};
---active-text: #{$dark-text-color};
---tree-highlight-bg: #{$dark-third-level-bg};
---nested-bg: #{$dark-third-level-bg}; // Same as tree highlight for dark mode
---hover-bg: #{$dark-hover-bg};
---hover-text: #{$dark-text-color};
---focus-bg: #{$dark-hover-bg};
---focus-border: #{$dark-focus-border};
---border-color: #{$dark-border-color};
---text-color: #{$dark-text-color};
---text-color-light: #{$dark-text-color-light};
---text-color-lighter: #{$dark-text-color-lighter};
---background-color: #{$dark-background-color};
---white: #{$dark-background-color};
---icon-color: #{$dark-icon-color};
---icon-active-color: #{$dark-icon-active-color};
---icon-hover-color: #{$dark-icon-hover-color};
+  --active-bg: #{$dark-active-bg};
+  --active-text: #{$dark-text-color};
+  --tree-highlight-bg: #{$dark-third-level-bg};
+  --hover-bg: #{$dark-hover-bg};
+  --hover-text: #{$dark-text-color};
+  --focus-bg: #{$dark-hover-bg};
+  --focus-border: #{$dark-focus-border};
+  --border-color: #{$dark-border-color};
+  --text-color: #{$dark-text-color};
+  --text-color-light: #{$dark-text-color-light};
+  --text-color-lighter: #{$dark-text-color-lighter};
+  --background-color: #{$dark-background-color};
+  --white: #{$dark-background-color};
+  --icon-color: #{$dark-icon-color};
+  --icon-active-color: #{$dark-icon-active-color};
+  --icon-hover-color: #{$dark-icon-hover-color};
+
+  // Level backgrounds for dark mode
+  --level-0-bg: #{$dark-level-0-bg};
+  --level-1-bg: #{$dark-level-1-bg};
+  --level-2-bg: #{$dark-level-2-bg};
+  --level-3-bg: #{$dark-level-3-bg};
 }
 
 @media (prefers-color-scheme: dark) {
@@ -533,7 +553,6 @@ textarea,
     --active-bg: #{$dark-active-bg};
     --active-text: #{$dark-text-color};
     --tree-highlight-bg: #{$dark-third-level-bg};
-    --nested-bg: #{$dark-background-color};
     --hover-bg: #{$dark-hover-bg};
     --hover-text: #{$dark-text-color};
     --focus-bg: #{$dark-hover-bg};
@@ -547,6 +566,12 @@ textarea,
     --icon-color: #{$dark-icon-color};
     --icon-active-color: #{$dark-icon-active-color};
     --icon-hover-color: #{$dark-icon-hover-color};
+
+    // Level backgrounds for system dark mode
+    --level-0-bg: #{$dark-level-0-bg};
+    --level-1-bg: #{$dark-level-1-bg};
+    --level-2-bg: #{$dark-level-2-bg};
+    --level-3-bg: #{$dark-level-3-bg};
   }
 }
 
@@ -558,7 +583,7 @@ textarea,
   }
 
   .app-header {
-    background-color: darken($dark-background-color, 5%);
+    background-color: color.adjust($dark-background-color, $lightness: -5%);
     border-bottom-color: $dark-border-color;
   }
 
@@ -568,7 +593,7 @@ textarea,
   }
 
   .content-area {
-    background-color: lighten($dark-background-color, 3%);
+    background-color: color.adjust($dark-background-color, $lightness: 3%);
 
     .content-placeholder {
       h2 {
@@ -585,11 +610,11 @@ textarea,
     }
 
     .demo-note {
-      background-color: lighten($dark-background-color, 8%);
+      background-color: color.adjust($dark-background-color, $lightness: 8%);
       border-left-color: #7B61FF;
 
       p {
-        color: lighten(#7B61FF, 20%);
+        color: color.adjust(#7B61FF, $lightness: 20%);
       }
     }
   }
@@ -604,7 +629,7 @@ textarea,
     }
 
     .app-header {
-      background-color: darken($dark-background-color, 5%);
+      background-color: color.adjust($dark-background-color, $lightness: -5%);
       border-bottom-color: $dark-border-color;
     }
 
@@ -614,7 +639,7 @@ textarea,
     }
 
     .content-area {
-      background-color: lighten($dark-background-color, 3%);
+      background-color: color.adjust($dark-background-color, $lightness: 3%);
 
       .content-placeholder {
         h2 {
@@ -631,11 +656,11 @@ textarea,
       }
 
       .demo-note {
-        background-color: lighten($dark-background-color, 8%);
+        background-color: color.adjust($dark-background-color, $lightness: 8%);
         border-left-color: #7B61FF;
 
         p {
-          color: lighten(#7B61FF, 20%);
+          color: color.adjust(#7B61FF, $lightness: 20%);
         }
       }
     }

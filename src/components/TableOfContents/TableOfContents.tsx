@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableOfContentsItem } from './TableOfContentsItem';
 import useTableOfContents from '../../hooks/useTableOfContents';
-import type { TableOfContentsProps } from '../../types';
+import type { TableOfContentsProps, TOCItem } from '../../types';
 import styles from './TableOfContents.module.scss';
 
 export const TableOfContents: React.FC<TableOfContentsProps> = ({
@@ -11,27 +11,37 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                                                                     initialActiveId,
                                                                     searchable = false,
                                                                     className,
+                                                                    apiEndpoint = '/api/toc',
                                                                 }) => {
     const { state, actions, loading, error } = useTableOfContents({
         data,
         initialActiveId,
         enableSearch: searchable,
+        apiEndpoint,
     });
 
     const { items, searchQuery, filteredItems } = state;
     const displayItems = filteredItems || items;
 
-    const handleItemClick = (item: any) => {
+    const handleItemClick = (item: TOCItem): void => {
         actions.setActiveItem(item.id);
         onItemClick?.(item);
     };
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         actions.setSearchQuery(e.target.value);
     };
 
-    const clearSearch = () => {
+    const clearSearch = (): void => {
         actions.clearSearch();
+    };
+
+    const handleCollapseAll = (): void => {
+        actions.collapseAll();
+        // If we're searching, also clear search to see the effect
+        if (searchQuery) {
+            actions.clearSearch();
+        }
     };
 
     if (loading) {
@@ -89,13 +99,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
                     Expand All
                 </button>
                 <button
-                    onClick={() => {
-                        actions.collapseAll();
-                        // If we're searching, also clear search to see the effect
-                        if (searchQuery) {
-                            actions.clearSearch();
-                        }
-                    }}
+                    onClick={handleCollapseAll}
                     className={styles.controlButton}
                     title="Collapse All"
                 >

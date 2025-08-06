@@ -1,30 +1,26 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .item {
   position: relative;
   border: none !important;
   box-shadow: none !important;
   outline: none !important;
-  transition: none;
 
-  // Default state - transparent background for level 0
-  background-color: transparent;
+  // Level-based background colors - FIXED implementation
+  // Light mode defaults
+  background-color: var(--level-0-bg);
 
-  // Nested levels (level 1+) get different backgrounds based on theme
-  &[data-level]:not([data-level="0"]) {
-    // Light mode - nested background
-    background-color: var(--nested-bg);
+  &[data-level="1"] {
+    background-color: var(--level-1-bg);
+  }
 
-    // Dark mode - use third level background for nested items
-    :root[data-theme="dark"] & {
-      background-color: var(--tree-highlight-bg); // #303033 in dark mode
-    }
+  &[data-level="2"] {
+    background-color: var(--level-2-bg);
+  }
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) & {
-        background-color: var(--tree-highlight-bg); // #303033 in dark mode
-      }
-    }
+  // Level 3 and beyond
+  &[data-level]:not([data-level="0"]):not([data-level="1"]):not([data-level="2"]) {
+    background-color: var(--level-3-bg);
   }
 
   // Ensure no pseudo-elements create lines
@@ -33,74 +29,36 @@
     display: none !important;
   }
 
-  // Tree highlighting - different behavior for light and dark mode
-  &.treeHighlight:not(.active) { // Only apply to non-active items
-    :root:not([data-theme="dark"]) & {
-      background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
-    }
+  // Tree highlighting - override level backgrounds when highlighting tree
+  &.treeHighlight:not(.active) {
+    background-color: var(--tree-highlight-bg) !important;
+    transition: background-color 0.3s ease-out;
 
-    @media (prefers-color-scheme: light) {
-      :root:not([data-theme="dark"]) & {
-        background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
-      }
-    }
-
-    :root[data-theme="dark"] & {
-      // In dark mode, use third level background for tree highlight
-      background-color: var(--tree-highlight-bg);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) & {
-        background-color: var(--tree-highlight-bg);
-      }
-    }
-
-    transition: background-color 0.3s ease-out; // Slower, softer transition for tree highlight
-
-    // All nested items should also have appropriate background
+    // All nested items should also have tree highlight background
     .item:not(.active) {
-      :root:not([data-theme="dark"]) & {
-        background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
-      }
-
-      @media (prefers-color-scheme: light) {
-        :root:not([data-theme="dark"]) & {
-          background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
-        }
-      }
-
-      :root[data-theme="dark"] & {
-        background-color: var(--tree-highlight-bg);
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) & {
-          background-color: var(--tree-highlight-bg);
-        }
-      }
-
-      transition: background-color 0.3s ease-out; // Consistent timing
+      background-color: var(--tree-highlight-bg) !important;
+      transition: background-color 0.3s ease-out;
     }
   }
 
-  // Active state - uses CSS variables for both light and dark mode
+  // Active state - highest priority
   &.active {
-    transition: none !important; // Remove transition for active state to prevent flash
+    background-color: transparent !important; // Active items have transparent background on .item level
+    transition: none !important;
 
     > .itemContent {
-      background-color: var(--active-bg) !important; // Use CSS variable
-      color: var(--active-text); // Use CSS variable
-      transition: none !important; // Remove transition for active content
+      background-color: var(--active-bg) !important;
+      color: var(--active-text);
+      transition: none !important;
 
       .itemButton {
         color: inherit;
-        transition: none !important; // Remove transition for active button
+        transition: none !important;
       }
 
       .expandIcon {
-        color: var(--icon-active-color); // Use CSS variable
-        transition: none !important; // Remove transition for active icon
+        color: var(--icon-active-color);
+        transition: none !important;
       }
     }
   }
@@ -108,15 +66,15 @@
   // Hover state (only when not active and not tree highlighted)
   &:not(.active):not(.treeHighlight):hover {
     > .itemContent {
-      background-color: $hover-bg;
-      border-radius: 0; // No border radius for hover state either
+      background-color: var(--hover-bg) !important;
+      border-radius: 0;
 
       .itemButton {
-        color: $hover-text;
+        color: var(--hover-text);
       }
 
       .expandIcon {
-        color: $icon-hover-color;
+        color: var(--icon-hover-color);
       }
     }
   }
@@ -128,9 +86,10 @@
   position: relative;
   transition: all $transition-duration $transition-easing;
   padding-left: calc(var(--indent-level, 0) * $indent-step + 12px);
-  border-radius: 0; // No border radius as per Figma design
-  margin: 0; // Remove margins to allow full width background
-  border: none; // Explicitly remove any borders
+  border-radius: 0;
+  margin: 0;
+  border: none;
+  background-color: transparent; // Content should be transparent by default
 }
 
 .itemButton {
@@ -138,79 +97,52 @@
   align-items: center;
   width: 100%;
   background: none;
-  border: none !important; // Force remove any borders
+  border: none !important;
   padding: 8px 12px 8px 0;
   margin: 0;
   text-align: left;
   cursor: pointer;
-  color: $text-color;
+  color: var(--text-color);
   font-size: 13px;
   font-family: inherit;
   line-height: 1.4;
   min-height: 32px;
   transition: all $transition-duration $transition-easing;
-  border-radius: 0; // No border radius as per Figma design
+  border-radius: 0;
 
-  // Focus styling - different for light and dark mode
+  // Focus styling
   &:focus-visible {
-    outline: none; // Remove default outline
+    outline: none;
+    background-color: var(--focus-bg);
 
-    // Light mode - just background change
-    :root:not([data-theme="dark"]) & {
-      background-color: $focus-bg;
-      border: none !important;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root:not([data-theme="dark"]) & {
-        background-color: $focus-bg;
-        border: none !important;
-      }
-    }
-
-    // Dark mode - border focus as per Figma
+    // Dark mode border focus
     :root[data-theme="dark"] & {
       border: 1px solid var(--focus-border) !important;
-      background-color: var(--focus-bg);
     }
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) & {
         border: 1px solid var(--focus-border) !important;
-        background-color: var(--focus-bg);
       }
     }
   }
 
   // Active button styling
   .item.active > .itemContent & {
-    color: $active-text;
+    color: var(--active-text);
     font-weight: 500;
 
     &:focus-visible {
       outline: none;
-
-      :root:not([data-theme="dark"]) & {
-        background-color: rgba(255, 255, 255, 0.1);
-        border: none !important;
-      }
-
-      @media (prefers-color-scheme: light) {
-        :root:not([data-theme="dark"]) & {
-          background-color: rgba(255, 255, 255, 0.1);
-          border: none !important;
-        }
-      }
+      background-color: rgba(255, 255, 255, 0.1);
 
       :root[data-theme="dark"] & {
         border: 1px solid var(--focus-border) !important;
-        background-color: rgba(255, 255, 255, 0.1);
       }
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) & {
           border: 1px solid var(--focus-border) !important;
-          background-color: rgba(255, 255, 255, 0.1);
         }
       }
     }
@@ -225,17 +157,17 @@
   height: 18px;
   margin-right: 6px;
   flex-shrink: 0;
-  color: var(--icon-color, #{$light-icon-color});
+  color: var(--icon-color);
   transition: color $transition-duration $transition-easing;
 
   // Active state icon color
   .item.active > .itemContent & {
-    color: var(--icon-active-color, #{$light-icon-active-color});
+    color: var(--icon-active-color);
   }
 
   // Hover state icon color (when not active)
   .item:not(.active):hover > .itemContent & {
-    color: var(--icon-hover-color, #{$light-icon-hover-color});
+    color: var(--icon-hover-color);
   }
 }
 
@@ -244,59 +176,72 @@
   line-height: 1.4;
   transition: color $transition-duration $transition-easing;
   word-break: break-word;
-  overflow-wrap: break-word; // Ensure long words break
-  hyphens: auto; // Add hyphenation for better text breaking
-  max-width: calc(100% - 28px); // Reserve space for icon
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: calc(100% - 28px);
 
   // For items without children, add left margin to align with items that have icons
   .item:not(.hasChildren) & {
-    margin-left: 28px; // 20px (icon width) + 8px (margin)
-    max-width: calc(100% - 56px); // Adjust max-width for non-expandable items
+    margin-left: 28px;
+    max-width: calc(100% - 56px);
   }
 }
 
-// Children list styling - smooth max-height transition without translateY
+// Children list styling
 .childrenList {
   list-style: none;
   padding: 0;
   margin: 0;
   background-color: transparent;
-  border: none; // Explicitly remove any borders
+  border: none;
   overflow: hidden;
 
-  // Smooth height transition - no translateY to avoid visual artifacts
   max-height: 2000px;
   opacity: 1;
   transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
 
-  // When collapsing (not visible), set max-height to 0
   .item:not(.expanded) & {
     max-height: 0;
     opacity: 0;
   }
 }
 
-// Anchors styling - simple fade for anchors
+// Anchors styling
 .anchorsList {
   list-style: none;
   padding: 4px 0 8px 0;
   margin: 0;
   background-color: transparent;
   overflow: hidden;
-  border: none !important; // Explicitly remove any borders
-
-  // Simple fade-in for anchors (they appear/disappear instantly anyway)
+  border: none !important;
   animation: fadeIn 0.15s ease-out;
 }
 
 .anchorItem {
   position: relative;
-  border: none !important; // Force remove any borders from anchor items
+  border: none !important;
+
+  // Anchors inherit the same level background as their parent item
+  &[data-level="0"] {
+    background-color: var(--level-0-bg);
+  }
+
+  &[data-level="1"] {
+    background-color: var(--level-1-bg);
+  }
+
+  &[data-level="2"] {
+    background-color: var(--level-2-bg);
+  }
+
+  &[data-level]:not([data-level="0"]):not([data-level="1"]):not([data-level="2"]) {
+    background-color: var(--level-3-bg);
+  }
 
   &:hover {
     .anchorButton {
-      background-color: $hover-bg;
-      color: $hover-text;
+      background-color: var(--hover-bg);
+      color: var(--hover-text);
 
       .anchorTitle::before {
         background-color: $primary-color;
@@ -312,44 +257,29 @@
   padding: 6px 12px;
   padding-left: calc(var(--indent-level, 0) * $indent-step + 32px);
   background: none;
-  border: none !important; // Force remove any borders
+  border: none !important;
   text-align: left;
   cursor: pointer;
-  color: $text-color-light;
+  color: var(--text-color-light);
   font-size: 12px;
   font-family: inherit;
   min-height: 28px;
   transition: all $transition-duration $transition-easing;
-  border-radius: 0; // No border radius as per Figma design
-  margin: 0; // Remove margins for full width
+  border-radius: 0;
+  margin: 0;
 
-  // Focus styling - different for light and dark mode
+  // Focus styling
   &:focus-visible {
-    outline: none; // Remove default outline
+    outline: none;
+    background-color: var(--focus-bg);
 
-    // Light mode - just background change
-    :root:not([data-theme="dark"]) & {
-      background-color: $focus-bg;
-      border: none !important;
-    }
-
-    @media (prefers-color-scheme: light) {
-      :root:not([data-theme="dark"]) & {
-        background-color: $focus-bg;
-        border: none !important;
-      }
-    }
-
-    // Dark mode - border focus as per Figma
     :root[data-theme="dark"] & {
       border: 1px solid var(--focus-border) !important;
-      background-color: var(--focus-bg);
     }
 
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) & {
         border: 1px solid var(--focus-border) !important;
-        background-color: var(--focus-bg);
       }
     }
   }
@@ -360,8 +290,8 @@
   position: relative;
   padding-left: 16px;
   word-break: break-word;
-  overflow-wrap: break-word; // Ensure long words break
-  hyphens: auto; // Add hyphenation for better text breaking
+  overflow-wrap: break-word;
+  hyphens: auto;
 
   &::before {
     content: '';
@@ -372,13 +302,13 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background-color: $text-color-lighter;
+    background-color: var(--text-color-lighter);
     transition: background-color $transition-duration $transition-easing;
-    flex-shrink: 0; // Prevent dot from shrinking
+    flex-shrink: 0;
   }
 }
 
-// Animations - clean without translateY
+// Animations
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -399,7 +329,6 @@
   }
 
   &.searching {
-    // During search, reduce animations
     * {
       transition-duration: 0.1s;
     }
@@ -411,13 +340,13 @@
   .item.active > .itemContent {
     background-color: #000;
     color: #fff;
-    border: none !important; // No borders even in high contrast
+    border: none !important;
   }
 
   .item:not(.active):hover > .itemContent {
     background-color: #fff;
     color: #000;
-    border: none !important; // No borders even in high contrast
+    border: none !important;
   }
 
   .expandIcon {

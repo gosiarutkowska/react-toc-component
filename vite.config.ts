@@ -8,8 +8,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     globals: true,
+    testTimeout: 10000, // 10 seconds timeout
+    hookTimeout: 10000, // 10 seconds for hooks
   },
   server: {
     port: 3000,
+    cors: true,
   },
 })

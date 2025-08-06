@@ -63,6 +63,7 @@ export type TableOfContentsProps = {
     initialActiveId?: string;
     searchable?: boolean;
     className?: string;
+    apiEndpoint?: string;
 };
 
 export type TableOfContentsItemProps = {
@@ -80,4 +81,5 @@ export type TOCApi = {
     filterByString: (query: string) => void;
     clearFilter: () => void;
     getActiveItem: () => TOCItem | null;
+    reload: () => Promise<void>;
 };

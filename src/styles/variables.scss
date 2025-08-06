@@ -7,7 +7,6 @@ $primary-light: rgba(107, 87, 255, 0.1);
 $light-active-bg: #6B57FF;  // Blue background for active items
 $light-active-text: #FFFFFF; // White text on blue background
 $light-tree-highlight-bg: #F4F4F4; // Light gray for tree highlighting
-$light-nested-bg: #FAFAFA; // Very light gray for nested levels (level 1+)
 $light-hover-bg: rgba(107, 87, 255, 0.08);
 $light-hover-text: #6B57FF;
 $light-focus-bg: rgba(107, 87, 255, 0.05);
@@ -21,6 +20,12 @@ $light-white: #FFFFFF;
 $light-icon-color: #9CA3AF;
 $light-icon-active-color: #FFFFFF;
 $light-icon-hover-color: #6B57FF;
+
+// Light mode level backgrounds
+$light-level-0-bg: transparent; // Root level - transparent
+$light-level-1-bg: #FAFAFA; // First nesting level
+$light-level-2-bg: #F4F4F4; // Second nesting level
+$light-level-3-bg: #EEEEEE; // Third nesting level and beyond
 
 // Dark mode colors (from Figma)
 $dark-background-color: #19191C; // Dark background
@@ -37,11 +42,16 @@ $dark-icon-color: #B0B0B0;
 $dark-icon-active-color: #FFFFFF;
 $dark-icon-hover-color: #7B61FF;
 
+// Dark mode level backgrounds
+$dark-level-0-bg: #19191C; // Root level - same as background
+$dark-level-1-bg: #303033; // First nesting level
+$dark-level-2-bg: #252527; // Second nesting level
+$dark-level-3-bg: #2A2A2D; // Third nesting level and beyond
+
 // Current theme variables (will be overridden by CSS custom properties)
 $active-bg: var(--active-bg, #{$light-active-bg});
 $active-text: var(--active-text, #{$light-active-text});
 $tree-highlight-bg: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
-$nested-bg: var(--nested-bg, #{$light-nested-bg});
 $hover-bg: var(--hover-bg, #{$light-hover-bg});
 $hover-text: var(--hover-text, #{$light-hover-text});
 $focus-bg: var(--focus-bg, #{$light-focus-bg});
@@ -55,6 +65,12 @@ $white: var(--white, #{$light-white});
 $icon-color: var(--icon-color, #{$light-icon-color});
 $icon-active-color: var(--icon-active-color, #{$light-icon-active-color});
 $icon-hover-color: var(--icon-hover-color, #{$light-icon-hover-color});
+
+// Level-specific backgrounds
+$level-0-bg: var(--level-0-bg, #{$light-level-0-bg});
+$level-1-bg: var(--level-1-bg, #{$light-level-1-bg});
+$level-2-bg: var(--level-2-bg, #{$light-level-2-bg});
+$level-3-bg: var(--level-3-bg, #{$light-level-3-bg});
 
 // Error color (same for both themes)
 $error-color: #DC2626;
