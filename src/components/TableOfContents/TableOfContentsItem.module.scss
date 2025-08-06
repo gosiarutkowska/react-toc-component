@@ -1,37 +1,123 @@
-// TableOfContentsItem.module.scss
-// Styles for individual TOC items based on Figma design
+@import '../../styles/variables';
 
 .item {
   position: relative;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: none;
 
-  // Hover effect for the entire item area
-  &:hover {
-    background-color: rgba(0, 122, 204, 0.05);
+  // Default state - transparent background for level 0
+  background-color: transparent;
+
+  // Nested levels (level 1+) get different backgrounds based on theme
+  &[data-level]:not([data-level="0"]) {
+    // Light mode - nested background
+    background-color: var(--nested-bg);
+
+    // Dark mode - use third level background for nested items
+    :root[data-theme="dark"] & {
+      background-color: var(--tree-highlight-bg); // #303033 in dark mode
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) & {
+        background-color: var(--tree-highlight-bg); // #303033 in dark mode
+      }
+    }
   }
 
-  // Active item styling
+  // Ensure no pseudo-elements create lines
+  &::before,
+  &::after {
+    display: none !important;
+  }
+
+  // Tree highlighting - different behavior for light and dark mode
+  &.treeHighlight:not(.active) { // Only apply to non-active items
+    :root:not([data-theme="dark"]) & {
+      background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) & {
+        background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
+      }
+    }
+
+    :root[data-theme="dark"] & {
+      // In dark mode, use third level background for tree highlight
+      background-color: var(--tree-highlight-bg);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) & {
+        background-color: var(--tree-highlight-bg);
+      }
+    }
+
+    transition: background-color 0.3s ease-out; // Slower, softer transition for tree highlight
+
+    // All nested items should also have appropriate background
+    .item:not(.active) {
+      :root:not([data-theme="dark"]) & {
+        background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme="dark"]) & {
+          background-color: var(--tree-highlight-bg, #{$light-tree-highlight-bg});
+        }
+      }
+
+      :root[data-theme="dark"] & {
+        background-color: var(--tree-highlight-bg);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) & {
+          background-color: var(--tree-highlight-bg);
+        }
+      }
+
+      transition: background-color 0.3s ease-out; // Consistent timing
+    }
+  }
+
+  // Active state - uses CSS variables for both light and dark mode
   &.active {
-    background-color: #007acc;
-    color: #fff;
+    transition: none !important; // Remove transition for active state to prevent flash
 
-    .itemButton {
-      color: #fff;
-      background-color: transparent;
-    }
+    > .itemContent {
+      background-color: var(--active-bg) !important; // Use CSS variable
+      color: var(--active-text); // Use CSS variable
+      transition: none !important; // Remove transition for active content
 
-    .expandButton {
-      color: #fff;
-    }
+      .itemButton {
+        color: inherit;
+        transition: none !important; // Remove transition for active button
+      }
 
-    &:hover {
-      background-color: #005a9e;
+      .expandIcon {
+        color: var(--icon-active-color); // Use CSS variable
+        transition: none !important; // Remove transition for active icon
+      }
     }
   }
 
-  // When searching, reduce visual hierarchy
-  &.searching {
-    .itemContent {
-      padding-left: calc(var(--indent-level, 0) * 12px + 8px);
+  // Hover state (only when not active and not tree highlighted)
+  &:not(.active):not(.treeHighlight):hover {
+    > .itemContent {
+      background-color: $hover-bg;
+      border-radius: 0; // No border radius for hover state either
+
+      .itemButton {
+        color: $hover-text;
+      }
+
+      .expandIcon {
+        color: $icon-hover-color;
+      }
     }
   }
 }
@@ -39,181 +125,318 @@
 .itemContent {
   display: flex;
   align-items: center;
-  padding: 2px 8px;
-  padding-left: calc(var(--indent-level, 0) * 16px + 8px);
-  min-height: 22px;
   position: relative;
-
-  // Background highlight for the current level only
-  .item.active > & {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+  transition: all $transition-duration $transition-easing;
+  padding-left: calc(var(--indent-level, 0) * $indent-step + 12px);
+  border-radius: 0; // No border radius as per Figma design
+  margin: 0; // Remove margins to allow full width background
+  border: none; // Explicitly remove any borders
 }
 
-// Main item button - now contains both icon and text
 .itemButton {
   display: flex;
   align-items: center;
   width: 100%;
   background: none;
-  border: none;
-  padding: 0;
+  border: none !important; // Force remove any borders
+  padding: 8px 12px 8px 0;
   margin: 0;
   text-align: left;
   cursor: pointer;
-  color: #333;
+  color: $text-color;
   font-size: 13px;
   font-family: inherit;
-  min-height: 18px;
+  line-height: 1.4;
+  min-height: 32px;
+  transition: all $transition-duration $transition-easing;
+  border-radius: 0; // No border radius as per Figma design
 
-  &:hover {
-    color: #007acc;
+  // Focus styling - different for light and dark mode
+  &:focus-visible {
+    outline: none; // Remove default outline
+
+    // Light mode - just background change
+    :root:not([data-theme="dark"]) & {
+      background-color: $focus-bg;
+      border: none !important;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) & {
+        background-color: $focus-bg;
+        border: none !important;
+      }
+    }
+
+    // Dark mode - border focus as per Figma
+    :root[data-theme="dark"] & {
+      border: 1px solid var(--focus-border) !important;
+      background-color: var(--focus-bg);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) & {
+        border: 1px solid var(--focus-border) !important;
+        background-color: var(--focus-bg);
+      }
+    }
   }
 
-  .item.active & {
-    color: #fff;
+  // Active button styling
+  .item.active > .itemContent & {
+    color: $active-text;
+    font-weight: 500;
 
-    &:hover {
-      color: #fff;
+    &:focus-visible {
+      outline: none;
+
+      :root:not([data-theme="dark"]) & {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none !important;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme="dark"]) & {
+          background-color: rgba(255, 255, 255, 0.1);
+          border: none !important;
+        }
+      }
+
+      :root[data-theme="dark"] & {
+        border: 1px solid var(--focus-border) !important;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) & {
+          border: 1px solid var(--focus-border) !important;
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+      }
     }
   }
 }
 
-// Expand/Collapse icon - now part of the button
 .expandIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  margin-right: 4px;
-  font-size: 10px;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-  transform-origin: center;
-  color: inherit;
+  color: var(--icon-color, #{$light-icon-color});
+  transition: color $transition-duration $transition-easing;
 
-  .item.expanded & {
-    transform: none; // Already pointing down
+  // Active state icon color
+  .item.active > .itemContent & {
+    color: var(--icon-active-color, #{$light-icon-active-color});
+  }
+
+  // Hover state icon color (when not active)
+  .item:not(.active):hover > .itemContent & {
+    color: var(--icon-hover-color, #{$light-icon-hover-color});
   }
 }
 
 .itemTitle {
   flex: 1;
-  line-height: 1.3;
+  line-height: 1.4;
+  transition: color $transition-duration $transition-easing;
   word-break: break-word;
-  hyphens: auto;
-  margin-left: 0; // Reset any margin
+  overflow-wrap: break-word; // Ensure long words break
+  hyphens: auto; // Add hyphenation for better text breaking
+  max-width: calc(100% - 28px); // Reserve space for icon
 
-  // For items without children, add margin to align with items that have icons
+  // For items without children, add left margin to align with items that have icons
   .item:not(.hasChildren) & {
-    margin-left: 20px; // Same width as icon + margin
+    margin-left: 28px; // 20px (icon width) + 8px (margin)
+    max-width: calc(100% - 56px); // Adjust max-width for non-expandable items
   }
 }
 
-// Children list
+// Children list styling - smooth max-height transition without translateY
 .childrenList {
   list-style: none;
   padding: 0;
   margin: 0;
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: transparent;
+  border: none; // Explicitly remove any borders
+  overflow: hidden;
 
-  .item.active & {
-    background-color: rgba(255, 255, 255, 0.05);
+  // Smooth height transition - no translateY to avoid visual artifacts
+  max-height: 2000px;
+  opacity: 1;
+  transition: max-height 0.25s ease-in-out, opacity 0.2s ease-in-out;
+
+  // When collapsing (not visible), set max-height to 0
+  .item:not(.expanded) & {
+    max-height: 0;
+    opacity: 0;
   }
 }
 
-// Anchors list (shown when parent is active)
+// Anchors styling - simple fade for anchors
 .anchorsList {
   list-style: none;
-  padding: 0;
+  padding: 4px 0 8px 0;
   margin: 0;
-  background-color: rgba(0, 122, 204, 0.1);
-  border-left: 2px solid #007acc;
+  background-color: transparent;
+  overflow: hidden;
+  border: none !important; // Explicitly remove any borders
 
-  .item.active & {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left-color: rgba(255, 255, 255, 0.3);
-  }
+  // Simple fade-in for anchors (they appear/disappear instantly anyway)
+  animation: fadeIn 0.15s ease-out;
 }
 
 .anchorItem {
   position: relative;
+  border: none !important; // Force remove any borders from anchor items
+
+  &:hover {
+    .anchorButton {
+      background-color: $hover-bg;
+      color: $hover-text;
+
+      .anchorTitle::before {
+        background-color: $primary-color;
+      }
+    }
+  }
 }
 
 .anchorButton {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 2px 8px;
-  padding-left: calc(var(--indent-level, 0) * 16px + 32px);
+  padding: 6px 12px;
+  padding-left: calc(var(--indent-level, 0) * $indent-step + 32px);
   background: none;
-  border: none;
+  border: none !important; // Force remove any borders
   text-align: left;
   cursor: pointer;
-  color: #555;
+  color: $text-color-light;
   font-size: 12px;
   font-family: inherit;
-  min-height: 20px;
+  min-height: 28px;
+  transition: all $transition-duration $transition-easing;
+  border-radius: 0; // No border radius as per Figma design
+  margin: 0; // Remove margins for full width
 
-  &:hover {
-    background-color: rgba(0, 122, 204, 0.1);
-    color: #007acc;
-  }
+  // Focus styling - different for light and dark mode
+  &:focus-visible {
+    outline: none; // Remove default outline
 
-  .item.active & {
-    color: rgba(255, 255, 255, 0.9);
+    // Light mode - just background change
+    :root:not([data-theme="dark"]) & {
+      background-color: $focus-bg;
+      border: none !important;
+    }
 
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) & {
+        background-color: $focus-bg;
+        border: none !important;
+      }
+    }
+
+    // Dark mode - border focus as per Figma
+    :root[data-theme="dark"] & {
+      border: 1px solid var(--focus-border) !important;
+      background-color: var(--focus-bg);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) & {
+        border: 1px solid var(--focus-border) !important;
+        background-color: var(--focus-bg);
+      }
     }
   }
 }
 
 .anchorTitle {
-  line-height: 1.2;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 16px;
   word-break: break-word;
+  overflow-wrap: break-word; // Ensure long words break
+  hyphens: auto; // Add hyphenation for better text breaking
 
-  // Add a small bullet point before anchor titles
   &::before {
-    content: '•';
-    margin-right: 6px;
-    opacity: 0.6;
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: $text-color-lighter;
+    transition: background-color $transition-duration $transition-easing;
+    flex-shrink: 0; // Prevent dot from shrinking
   }
 }
 
-// Smooth animations
-.childrenList,
-.anchorsList {
-  transition: all 0.2s ease;
-}
-
-// Focus styles for accessibility
-.itemButton:focus,
-.anchorButton:focus {
-  outline: 2px solid #007acc;
-  outline-offset: -2px;
-  border-radius: 2px;
-}
-
-.item.active {
-  .itemButton:focus,
-  .anchorButton:focus {
-    outline-color: rgba(255, 255, 255, 0.8);
+// Animations - clean without translateY
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
-// High contrast mode support
+// States for better UX
+.item {
+  &.hasChildren {
+    > .itemContent {
+      .itemButton {
+        cursor: pointer;
+      }
+    }
+  }
+
+  &.searching {
+    // During search, reduce animations
+    * {
+      transition-duration: 0.1s;
+    }
+  }
+}
+
+// High contrast mode
 @media (prefers-contrast: high) {
-  .item.active {
+  .item.active > .itemContent {
     background-color: #000;
     color: #fff;
-    border: 1px solid #fff;
+    border: none !important; // No borders even in high contrast
   }
 
-  .itemButton:hover {
-    color: #000;
+  .item:not(.active):hover > .itemContent {
     background-color: #fff;
+    color: #000;
+    border: none !important; // No borders even in high contrast
+  }
+
+  .expandIcon {
+    font-weight: bold;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .itemContent,
+  .itemButton,
+  .expandIcon,
+  .itemTitle,
+  .childrenList,
+  .anchorsList,
+  .anchorButton,
+  .anchorTitle::before {
+    transition: none !important;
+    animation: none !important;
   }
 }

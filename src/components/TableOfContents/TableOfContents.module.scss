@@ -1,30 +1,30 @@
-// TableOfContents.module.scss
-// Main container styles based on Figma design
+@import '../../styles/variables';
 
 .container {
-  width: 100%;
-  max-width: 320px;
+  width: 320px; // Fixed width - no max-width to prevent jumping
+  min-width: 320px; // Ensure minimum width
   height: 100vh;
-  background-color: #f5f5f5;
-  border-right: 1px solid #e0e0e0;
+  background-color: $background-color;
+  border-right: 1px solid $border-color;
   display: flex;
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13px;
   line-height: 1.4;
+  overflow: hidden;
+  flex-shrink: 0; // Prevent shrinking
 }
 
-// Loading state
 .loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: #666;
+  color: $text-color-light;
 
   p {
-    margin: 12px 0 0 0;
+    margin: $base-spacing * 1.5 0 0 0;
     font-size: 12px;
   }
 }
@@ -32,8 +32,8 @@
 .loadingSpinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #e0e0e0;
-  border-top: 2px solid #007acc;
+  border: 2px solid $border-color;
+  border-top: 2px solid $primary-color;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -43,10 +43,9 @@
   100% { transform: rotate(360deg); }
 }
 
-// Error state
 .error {
-  padding: 16px;
-  color: #d32f2f;
+  padding: $base-spacing * 2;
+  color: $error-color;
   font-size: 12px;
 
   p {
@@ -54,11 +53,11 @@
   }
 }
 
-// Search section
 .searchContainer {
-  padding: 8px 12px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #fff;
+  padding: $base-spacing $base-spacing * 1.5;
+  border-bottom: 1px solid $border-color;
+  background-color: $white;
+  flex-shrink: 0;
 }
 
 .searchInputWrapper {
@@ -69,77 +68,94 @@
 
 .searchInput {
   width: 100%;
-  padding: 6px 8px;
-  padding-right: 24px;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
+  padding: 8px $base-spacing * 1.5;
+  padding-right: 32px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
   font-size: 12px;
   font-family: inherit;
-  background-color: #fff;
-  color: #333; /* Add text color */
+  background-color: $white;
+  color: $text-color;
+  transition: all $transition-duration $transition-easing;
 
   &:focus {
     outline: none;
-    border-color: #007acc;
-    box-shadow: 0 0 0 1px rgba(0, 122, 204, 0.3);
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px $focus-border;
   }
 
   &::placeholder {
-    color: #999;
+    color: $text-color-lighter;
   }
 }
 
 .clearButton {
   position: absolute;
-  right: 4px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #999;
+  color: $text-color-lighter;
   font-size: 16px;
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 4px;
   line-height: 1;
+  border-radius: $border-radius;
+  transition: all $transition-duration $transition-easing;
 
   &:hover {
-    color: #666;
+    color: $text-color;
+    background-color: $hover-bg;
+  }
+
+  &:focus {
+    outline: 2px solid $focus-border;
+    outline-offset: 1px;
   }
 }
 
-// Controls section
 .controls {
   display: flex;
-  gap: 4px;
-  padding: 8px 12px;
-  border-bottom: 1px solid #e0e0e0;
-  background-color: #fafafa;
+  gap: $base-spacing;
+  padding: $base-spacing $base-spacing * 1.5;
+  border-bottom: 1px solid $border-color;
+  background-color: $white;
+  flex-shrink: 0;
 }
 
 .controlButton {
-  padding: 4px 8px;
-  border: 1px solid #d0d0d0;
-  border-radius: 3px;
-  background-color: #fff;
-  color: #333;
+  padding: 6px $base-spacing * 1.5;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background-color: $white;
+  color: $text-color;
   font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all $transition-duration $transition-easing;
 
   &:hover {
-    background-color: #e6f3ff;
-    border-color: #007acc;
+    background-color: $hover-bg;
+    border-color: $primary-color;
+    color: $primary-color;
+  }
+
+  &:focus {
+    outline: 2px solid $focus-border;
+    outline-offset: 1px;
   }
 
   &:active {
-    background-color: #cce7ff;
+    background-color: $primary-light;
+    transform: translateY(1px);
   }
 }
 
-// Navigation area
 .navigation {
   flex: 1;
   overflow-y: auto;
+  background-color: $white;
   padding: 0;
 }
 
@@ -149,19 +165,18 @@
   margin: 0;
 }
 
-// Empty state
 .empty {
-  padding: 24px 16px;
+  padding: $base-spacing * 4 $base-spacing * 2;
   text-align: center;
-  color: #666;
+  color: $text-color-light;
   font-size: 12px;
   font-style: italic;
 }
 
-// Scrollbar styling
+// Custom scrollbar styling
 .navigation {
   scrollbar-width: thin;
-  scrollbar-color: #c0c0c0 transparent;
+  scrollbar-color: $border-color transparent;
 
   &::-webkit-scrollbar {
     width: 8px;
@@ -172,20 +187,54 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0;
-    border-radius: 4px;
+    background-color: $border-color;
+    border-radius: $border-radius;
+    transition: background-color $transition-duration $transition-easing;
 
     &:hover {
-      background-color: #a0a0a0;
+      background-color: $text-color-lighter;
     }
   }
 }
 
-// Responsive adjustments
+// Responsive design
 @media (max-width: 768px) {
   .container {
-    max-width: 100%;
+    width: 100%;
+    min-width: auto;
     height: auto;
     max-height: 50vh;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  .controlButton {
+    flex: 1;
+    min-width: 80px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .container {
+    border-right-width: 2px;
+  }
+
+  .searchInput:focus {
+    box-shadow: 0 0 0 3px $focus-border;
+  }
+
+  .controlButton {
+    border-width: 2px;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

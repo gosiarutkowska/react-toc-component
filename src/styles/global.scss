@@ -1,0 +1,658 @@
+@import './variables';
+
+// Global animations for TOC
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: 2000px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes collapseUp {
+  from {
+    opacity: 1;
+    max-height: 2000px;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+// Global reset and base styles
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: $white;
+  color: $text-color;
+  line-height: 1.4;
+  font-size: 14px;
+  margin: 0;
+  display: block; // Override Vite's default
+  place-items: initial; // Override Vite's default
+  min-width: initial; // Override Vite's default
+  min-height: initial; // Override Vite's default
+}
+
+// Focus styles for better accessibility - NO OUTLINES as per Figma design
+*:focus-visible {
+  outline: none; // Remove all default outlines to match Figma design
+}
+
+// Button reset
+button {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  border-radius: initial; // Override Vite's default
+  border: initial; // Override Vite's default
+  font-weight: initial; // Override Vite's default
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &:hover {
+    border-color: initial; // Override Vite's default
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none; // Override Vite's default
+  }
+}
+
+// Link reset
+a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: initial; // Override Vite's default
+
+  &:hover {
+    text-decoration: underline;
+    color: inherit; // Override Vite's default
+  }
+}
+
+// List reset - EXTRA STRONG RESET
+ul, ol, li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: none !important; // Force remove any borders
+  outline: none !important; // Force remove any outlines
+}
+
+// Heading reset
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  font-size: inherit; // Override Vite's default
+}
+
+// Input reset
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  outline: none;
+
+  &::placeholder {
+    color: $text-color-lighter;
+    opacity: 1;
+  }
+}
+
+// Smooth transitions for interactive elements
+button,
+input,
+select,
+textarea,
+[role="button"],
+[tabindex] {
+  transition: all $transition-duration $transition-easing;
+}
+
+// Loading states
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+// Utility classes for animations
+.fade-in {
+  animation: fadeIn $transition-duration $transition-easing;
+}
+
+.fade-out {
+  animation: fadeOut $transition-duration $transition-easing;
+}
+
+.slide-in {
+  animation: slideIn $transition-duration $transition-easing;
+}
+
+.expand-down {
+  animation: expandDown $expand-duration $transition-easing;
+}
+
+.collapse-up {
+  animation: collapseUp $expand-duration $transition-easing;
+}
+
+// Scrollbar styling for webkit browsers
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $border-color;
+  border-radius: $border-radius;
+  transition: background-color $transition-duration $transition-easing;
+
+  &:hover {
+    background-color: $text-color-lighter;
+  }
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+// App-specific styles (moved from App.css)
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-header {
+  background-color: #2d3748;
+  color: white;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h1 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+}
+
+.theme-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+}
+
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.toc-sidebar {
+  flex-shrink: 0;
+  border-right: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+.content-placeholder {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h2 {
+    color: #2d3748;
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  p {
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: #4a5568;
+  }
+
+  ul {
+    margin: 16px 0;
+    padding-left: 24px;
+    list-style: disc; // Re-enable bullets for content
+  }
+
+  li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #4a5568;
+  }
+}
+
+.demo-note {
+  background-color: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 16px;
+  margin-top: 32px;
+  border-radius: 0 4px 4px 0;
+
+  p {
+    margin: 0;
+    color: #1565c0;
+    font-size: 14px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  // Only in high contrast mode, we can add subtle focus indicators
+  *:focus-visible {
+    outline: 2px solid currentColor !important;
+    outline-offset: 2px;
+  }
+
+  button:hover {
+    background-color: $white !important;
+    color: $text-color !important;
+    border: 2px solid $text-color !important;
+  }
+
+  .app-header {
+    background-color: #000;
+    border-bottom: 2px solid #fff;
+  }
+
+  .content-area {
+    background-color: #fff;
+    color: #000;
+  }
+
+  .demo-note {
+    background-color: #000;
+    color: #fff;
+    border-left-color: #fff;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .app-main {
+    flex-direction: column;
+  }
+
+  .toc-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    max-height: 40vh;
+  }
+
+  .content-placeholder {
+    padding: 16px;
+
+    h2 {
+      font-size: 24px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 12px 16px;
+
+    h1 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+  }
+
+  .content-placeholder {
+    padding: 12px;
+  }
+
+  .demo-note {
+    margin-top: 24px;
+    padding: 12px;
+  }
+}
+
+// Light mode default variables (fallback)
+:root {
+  --active-bg: #{$light-active-bg};
+  --active-text: #{$light-active-text};
+  --tree-highlight-bg: #{$light-tree-highlight-bg};
+  --nested-bg: transparent; // Light mode - level 0 transparent, nested will be overridden
+  --hover-bg: #{$light-hover-bg};
+  --hover-text: #{$light-hover-text};
+  --focus-bg: #{$light-focus-bg};
+  --focus-border: #{$light-focus-border};
+  --border-color: #{$light-border-color};
+  --text-color: #{$light-text-color};
+  --text-color-light: #{$light-text-color-light};
+  --text-color-lighter: #{$light-text-color-lighter};
+  --background-color: #{$light-background-color};
+  --white: #{$light-white};
+  --icon-color: #{$light-icon-color};
+  --icon-active-color: #{$light-icon-active-color};
+  --icon-hover-color: #{$light-icon-hover-color};
+}
+
+// Explicit light theme
+:root[data-theme="light"] {
+  --active-bg: #{$light-active-bg};
+  --active-text: #{$light-active-text};
+  --tree-highlight-bg: #{$light-tree-highlight-bg};
+  --nested-bg: #{$light-nested-bg}; // Light nested background for levels 1+
+  --hover-bg: #{$light-hover-bg};
+  --hover-text: #{$light-hover-text};
+  --focus-bg: #{$light-focus-bg};
+  --focus-border: #{$light-focus-border};
+  --border-color: #{$light-border-color};
+  --text-color: #{$light-text-color};
+  --text-color-light: #{$light-text-color-light};
+  --text-color-lighter: #{$light-text-color-lighter};
+  --background-color: #{$light-background-color};
+  --white: #{$light-white};
+  --icon-color: #{$light-icon-color};
+  --icon-active-color: #{$light-icon-active-color};
+  --icon-hover-color: #{$light-icon-hover-color};
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --nested-bg: #{$light-nested-bg}; // Light nested background for levels 1+
+  }
+}
+// Dark mode color variables
+:root[data-theme="dark"] {
+--active-bg: #{$dark-active-bg};
+--active-text: #{$dark-text-color};
+--tree-highlight-bg: #{$dark-third-level-bg};
+--nested-bg: #{$dark-third-level-bg}; // Same as tree highlight for dark mode
+--hover-bg: #{$dark-hover-bg};
+--hover-text: #{$dark-text-color};
+--focus-bg: #{$dark-hover-bg};
+--focus-border: #{$dark-focus-border};
+--border-color: #{$dark-border-color};
+--text-color: #{$dark-text-color};
+--text-color-light: #{$dark-text-color-light};
+--text-color-lighter: #{$dark-text-color-lighter};
+--background-color: #{$dark-background-color};
+--white: #{$dark-background-color};
+--icon-color: #{$dark-icon-color};
+--icon-active-color: #{$dark-icon-active-color};
+--icon-hover-color: #{$dark-icon-hover-color};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --active-bg: #{$dark-active-bg};
+    --active-text: #{$dark-text-color};
+    --tree-highlight-bg: #{$dark-third-level-bg};
+    --nested-bg: #{$dark-background-color};
+    --hover-bg: #{$dark-hover-bg};
+    --hover-text: #{$dark-text-color};
+    --focus-bg: #{$dark-hover-bg};
+    --focus-border: #{$dark-focus-border};
+    --border-color: #{$dark-border-color};
+    --text-color: #{$dark-text-color};
+    --text-color-light: #{$dark-text-color-light};
+    --text-color-lighter: #{$dark-text-color-lighter};
+    --background-color: #{$dark-background-color};
+    --white: #{$dark-background-color};
+    --icon-color: #{$dark-icon-color};
+    --icon-active-color: #{$dark-icon-active-color};
+    --icon-hover-color: #{$dark-icon-hover-color};
+  }
+}
+
+// Styles for explicit dark theme
+:root[data-theme="dark"] {
+  body {
+    background-color: $dark-background-color;
+    color: $dark-text-color;
+  }
+
+  .app-header {
+    background-color: darken($dark-background-color, 5%);
+    border-bottom-color: $dark-border-color;
+  }
+
+  .toc-sidebar {
+    background-color: $dark-background-color;
+    border-right-color: $dark-border-color;
+  }
+
+  .content-area {
+    background-color: lighten($dark-background-color, 3%);
+
+    .content-placeholder {
+      h2 {
+        color: $dark-text-color;
+      }
+
+      p {
+        color: $dark-text-color-light;
+      }
+
+      li {
+        color: $dark-text-color-light;
+      }
+    }
+
+    .demo-note {
+      background-color: lighten($dark-background-color, 8%);
+      border-left-color: #7B61FF;
+
+      p {
+        color: lighten(#7B61FF, 20%);
+      }
+    }
+  }
+}
+
+// Styles for system dark theme (when no explicit override)
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    body {
+      background-color: $dark-background-color;
+      color: $dark-text-color;
+    }
+
+    .app-header {
+      background-color: darken($dark-background-color, 5%);
+      border-bottom-color: $dark-border-color;
+    }
+
+    .toc-sidebar {
+      background-color: $dark-background-color;
+      border-right-color: $dark-border-color;
+    }
+
+    .content-area {
+      background-color: lighten($dark-background-color, 3%);
+
+      .content-placeholder {
+        h2 {
+          color: $dark-text-color;
+        }
+
+        p {
+          color: $dark-text-color-light;
+        }
+
+        li {
+          color: $dark-text-color-light;
+        }
+      }
+
+      .demo-note {
+        background-color: lighten($dark-background-color, 8%);
+        border-left-color: #7B61FF;
+
+        p {
+          color: lighten(#7B61FF, 20%);
+        }
+      }
+    }
+  }
+}
+
+// Print styles
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  button,
+  input {
+    display: none !important;
+  }
+}
